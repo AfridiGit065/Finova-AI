@@ -1,6 +1,5 @@
 import { NextRequest } from 'next/server';
 import { fetchCandles } from '@/lib/providers/orchestrator';
-import { CANDLE_DATA } from '@/lib/constants';
 
 export async function GET(request: NextRequest) {
   const symbol = request.nextUrl.searchParams.get('symbol') || 'AAPL';
@@ -9,6 +8,8 @@ export async function GET(request: NextRequest) {
   try {
     const data = await fetchCandles(symbol, resolution, count);
     if (data.length) return Response.json(data);
-  } catch { /* fall through to fallback */ }
-  return Response.json(CANDLE_DATA);
+    return Response.json({ error: 'Candle data unavailable — try a different timeframe' }, { status: 503 });
+  } catch {
+    return Response.json({ error: 'Candle data unavailable — try a different timeframe' }, { status: 503 });
+  }
 }

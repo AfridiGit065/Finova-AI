@@ -2,10 +2,11 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import dynamic from 'next/dynamic';
-import { Circle } from 'lucide-react';
+import { Circle, AlertTriangle } from 'lucide-react';
 import { U, TICKERS } from '@/lib/constants';
 import { Chip } from '@/components/shared/chip';
 import { GlassCard } from '@/components/shared/glass-card';
+import { ErrorMessage } from '@/components/shared/error-message';
 
 const CandleChart = dynamic(() => import('./candle-chart').then(m => m.CandleChart), {
   ssr: false,
@@ -83,21 +84,27 @@ export default function TechnicalSuite() {
   const [tf, setTf] = useState("1M");
   const [candles, setCandles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [lastRefreshed, setLastRefreshed] = useState<Date | null>(null);
 
   useEffect(() => {
     let mounted = true;
     setLoading(true);
+    setError(null);
     const load = async () => {
       try {
         const res = await fetch(`/api/market/candles?symbol=${sel}&resolution=${RES_MAP[tf]}&count=${CNT_MAP[tf]}`);
-        if (!res.ok) throw new Error('fetch failed');
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({}));
+          throw new Error(body?.error || 'Candle data unavailable');
+        }
         const data = await res.json();
         if (!mounted) return;
         setCandles(data.map((x: any) => ({ ...x, bullish: x.close >= x.open })));
+        setError(null);
         setLastRefreshed(new Date());
-      } catch {
-        // keep previous data on error
+      } catch (e) {
+        if (mounted) setError(e instanceof Error ? e.message : 'Candle data unavailable');
       } finally {
         if (mounted) setLoading(false);
       }
@@ -180,6 +187,13 @@ export default function TechnicalSuite() {
               border: "1px solid rgba(251,191,36,0.28)", letterSpacing: "0.07em",
               display: "flex", alignItems: "center", gap: 5
             }}>LOADING</span>
+          ) : error ? (
+            <span style={{
+              fontSize: 9, fontWeight: 700, color: U.rose, background: U.roseSoft,
+              padding: "3px 10px", borderRadius: 999,
+              border: "1px solid rgba(251,113,133,0.28)", letterSpacing: "0.07em",
+              display: "flex", alignItems: "center", gap: 5
+            }}><AlertTriangle size={8} color={U.rose} /> OFFLINE</span>
           ) : (
             <span style={{
               fontSize: 9, fontWeight: 700, color: U.up, background: U.emeraldSoft,
@@ -203,24 +217,33 @@ export default function TechnicalSuite() {
             {lastRefreshed ? `Updated ${lastRefreshed.toLocaleTimeString()}` : "Loading..."}
           </span>
         </div>
+        {error && !candles.length && (
+          <div style={{ marginBottom: 8 }}>
+            <ErrorMessage message={error + " — retrying every 30s"} />
+          </div>
+        )}
         <CandleChart data={candles} loading={loading} />
       </GlassCard>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 8 }}>
-        {indicatorCards.map(ind => (
-          <GlassCard key={ind.l} style={{ padding: "12px 14px", position: "relative", overflow: "hidden" }}>
-            <div style={{
-              position: "absolute", top: 0, left: 0, right: 0, height: 1,
-              background: `linear-gradient(90deg,transparent,${ind.accent},transparent)`
-            }} />
-            <div style={{
-              fontSize: 9, fontWeight: 600, color: U.textMute, textTransform: "uppercase",
-              letterSpacing: "0.1em", marginBottom: 5
-            }}>{ind.l}</div>
-            <div style={{ fontSize: 16, fontWeight: 700, color: U.text, fontFamily: 'JetBrains Mono', letterSpacing: "-0.02em" }}>{ind.v}</div>
-            <div style={{ fontSize: 10, color: U.textDim, marginTop: 4 }}>{ind.n}</div>
-          </GlassCard>
-        ))}
-      </div>
+      {error && !candles.length ? (
+        <ErrorMessage message={error + " — indicators unavailable without chart data"} compact />
+      ) : (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 8 }}>
+          {indicatorCards.map(ind => (
+            <GlassCard key={ind.l} style={{ padding: "12px 14px", position: "relative", overflow: "hidden" }}>
+              <div style={{
+                position: "absolute", top: 0, left: 0, right: 0, height: 1,
+                background: `linear-gradient(90deg,transparent,${ind.accent},transparent)`
+              }} />
+              <div style={{
+                fontSize: 9, fontWeight: 600, color: U.textMute, textTransform: "uppercase",
+                letterSpacing: "0.1em", marginBottom: 5
+              }}>{ind.l}</div>
+              <div style={{ fontSize: 16, fontWeight: 700, color: U.text, fontFamily: 'JetBrains Mono', letterSpacing: "-0.02em" }}>{ind.v}</div>
+              <div style={{ fontSize: 10, color: U.textDim, marginTop: 4 }}>{ind.n}</div>
+            </GlassCard>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

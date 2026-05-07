@@ -6,7 +6,6 @@ import {
   fetchQuote as fhQuote, fetchCandles as fhCandles,
   fetchFundamentals as fhFundamentals, fetchNews as fhNews,
   fetchIndicators as fhIndicators, fetchKpis as fhKpis, fetchSectors as fhSectors,
-  isRateLimited as fhRateLimited,
 } from './finnhub';
 import {
   fetchQuote as avQuote, fetchCandles as avCandles,
@@ -15,14 +14,8 @@ import {
 } from './alpha-vantage';
 
 async function fallback<T>(primary: () => Promise<T>, secondary: () => Promise<T>): Promise<T> {
-  try {
-    return await primary();
-  } catch (err) {
-    if (fhRateLimited(err)) {
-      return await secondary();
-    }
-    throw err;
-  }
+  try { return await primary(); } catch {}
+  return secondary();
 }
 
 export async function fetchQuote(symbols: string[]): Promise<NormalizedQuote[]> {
