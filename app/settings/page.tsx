@@ -1,19 +1,22 @@
 'use client';
 
-import { Settings as SettingsIcon, Server, Palette, Key, CheckCircle, XCircle } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Settings as SettingsIcon, Server, Palette, CheckCircle, XCircle } from 'lucide-react';
 import { U } from '@/lib/constants';
 import { GlassCard } from '@/components/shared/glass-card';
 import { SectionTitle } from '@/components/shared/section-title';
 
 export default function SettingsPage() {
-  const finnhubKey = typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_FINNHUB_KEY || process.env.FINNHUB_API_KEY : null;
-  const avKey = typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_ALPHA_VANTAGE_KEY || process.env.ALPHA_VANTAGE_API_KEY : null;
-  const geminiKey = typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_GEMINI_API_KEY || process.env.GEMINI_API_KEY : null;
+  const [conn, setConn] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    fetch('/api/settings').then(r => r.json()).then(setConn).catch(() => {});
+  }, []);
 
   const connections = [
-    { name: 'Finnhub', key: finnhubKey, label: 'Market data (primary)' },
-    { name: 'Alpha Vantage', key: avKey, label: 'Market data (fallback)' },
-    { name: 'Gemini AI', key: geminiKey, label: 'AI Copilot' },
+    { name: 'Finnhub', ok: conn.finnhub, label: 'Market data (primary)' },
+    { name: 'Alpha Vantage', ok: conn.alphaVantage, label: 'Market data (fallback)' },
+    { name: 'Gemini AI', ok: conn.gemini, label: 'AI Copilot' },
   ];
 
   return (
@@ -31,15 +34,14 @@ export default function SettingsPage() {
           </div>
         </div>
         {connections.map(c => {
-          const ok = !!c.key;
           return (
             <div key={c.name} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 0", borderBottom: `1px solid ${U.border}` }}>
-              {ok ? <CheckCircle size={16} color={U.emerald} /> : <XCircle size={16} color={U.rose} />}
+              {c.ok ? <CheckCircle size={16} color={U.emerald} /> : <XCircle size={16} color={U.rose} />}
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: 12, fontWeight: 600, color: U.text }}>{c.name}</div>
                 <div style={{ fontSize: 10, color: U.textMute }}>{c.label}</div>
               </div>
-              <span style={{ fontSize: 10, fontWeight: 600, color: ok ? U.emerald : U.rose, background: ok ? U.emeraldSoft : U.roseSoft, padding: "3px 10px", borderRadius: 999 }}>{ok ? 'Connected' : 'Not set'}</span>
+              <span style={{ fontSize: 10, fontWeight: 600, color: c.ok ? U.emerald : U.rose, background: c.ok ? U.emeraldSoft : U.roseSoft, padding: "3px 10px", borderRadius: 999 }}>{c.ok ? 'Connected' : 'Not set'}</span>
             </div>
           );
         })}
