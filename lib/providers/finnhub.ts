@@ -74,12 +74,12 @@ export async function fetchFundamentals(symbol: string): Promise<NormalizedFunda
   const m = data?.metric;
   if (!m) return null;
   const peRatio = m.peBasicExclExtraTTM ?? 0;
-  const roe = m.returnOnEquityTTM ?? 0;
-  const revenueCagr = m.revenueGrowthTTM ?? 0;
-  const netMargin = m.profitMarginTTM ?? 0;
-  const debtEquity = m.totalDebtToEquityTTM ?? 0;
+  const roe = m.roeTTM != null ? m.roeTTM / 100 : 0;
+  const revenueCagr = m.revenueGrowthTTMYoy != null ? m.revenueGrowthTTMYoy / 100 : 0;
+  const netMargin = m.netProfitMarginTTM != null ? m.netProfitMarginTTM / 100 : 0;
+  const debtEquity = m['totalDebt/totalEquityQuarterly'] ?? m['totalDebt/totalEquityAnnual'] ?? 0;
   const marketCap = m.marketCapitalization ?? 0;
-  if (!peRatio && !roe && !revenueCagr && !netMargin) return null;
+  if (!peRatio && !roe && !revenueCagr && !netMargin && !debtEquity) return null;
   return { symbol, name: '', peRatio, roe, revenueCagr, netMargin, debtEquity, marketCap };
 }
 
