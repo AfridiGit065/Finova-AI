@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
-import { BarChart2, Trophy, BarChart3, Zap, AlertTriangle, TrendingUp, RefreshCw } from 'lucide-react';
+import { BarChart2, Trophy, BarChart3, Zap, AlertTriangle, TrendingUp, RefreshCw, ArrowLeftRight } from 'lucide-react';
 import {
   RadarChart, Radar, PolarGrid,
   PolarAngleAxis, PolarRadiusAxis, Legend, ResponsiveContainer
@@ -13,6 +13,7 @@ import { StockSelector } from './stock-selector';
 import { SectionTitle } from '@/components/shared/section-title';
 import { GlassCard } from '@/components/shared/glass-card';
 import { ErrorMessage } from '@/components/shared/error-message';
+import { useToast } from '@/components/shared/toast-provider';
 import { SP500_TOP100 } from '@/lib/symbols/sp500-top100';
 
 const COMPARE_DEFAULTS = SP500_TOP100.slice(0, 8).map(s => s.sym);
@@ -209,6 +210,7 @@ export default function CompareAnalytics({ initialSymbol }: { initialSymbol?: st
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const mountedRef = useRef(true);
+  const { toast } = useToast();
 
   useEffect(() => { setMounted(true); mountedRef.current = true; return () => { mountedRef.current = false; }; }, []);
 
@@ -252,8 +254,15 @@ export default function CompareAnalytics({ initialSymbol }: { initialSymbol?: st
           return { ...prev, [data.symbol]: data };
         });
       }
-    } catch {}
+    } catch {
+      toast('error', `Failed to load data for ${sym}`);
+    }
   }, []);
+
+  const handleSwap = useCallback(() => {
+    setSymA(symB);
+    setSymB(symA);
+  }, [symA, symB]);
 
   const handleChangeA = useCallback((sym: string) => {
     setSymA(sym);
@@ -282,7 +291,20 @@ export default function CompareAnalytics({ initialSymbol }: { initialSymbol?: st
         <SectionTitle icon={BarChart2}>Select two stocks to compare</SectionTitle>
         <div style={{ display: "flex", gap: 12, alignItems: "flex-start", position: "relative" }}>
           <StockSelector value={symA} onChange={handleChangeA} exclude={symB} accent={U.cyan} accentRgb="34,211,238" label="Stock A" isWinner={!!hasData && (scorecardMap[symA]?.score ?? 0) >= (scorecardMap[symB]?.score ?? 0)} options={scorecardMap} />
-          <div style={{ flexShrink: 0, alignSelf: "center", width: 36, height: 36, borderRadius: "50%", background: U.glass, border: `1px solid ${U.borderHi}`, backdropFilter: "blur(12px)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 800, color: U.textMute }}>VS</div>
+          <div style={{ flexShrink: 0, alignSelf: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+            <div style={{ width: 36, height: 36, borderRadius: "50%", background: U.glass, border: `1px solid ${U.borderHi}`, backdropFilter: "blur(12px)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 800, color: U.textMute }}>VS</div>
+            <button onClick={handleSwap} title="Swap symbols" style={{
+              background: 'transparent', border: `1px solid ${U.border}`, borderRadius: 8,
+              color: U.textMute, cursor: 'pointer', padding: 4,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              transition: 'all .15s',
+            }}
+              onMouseEnter={e => { e.currentTarget.style.color = U.cyan; e.currentTarget.style.borderColor = U.cyan; }}
+              onMouseLeave={e => { e.currentTarget.style.color = U.textMute; e.currentTarget.style.borderColor = U.border; }}
+            >
+              <ArrowLeftRight size={12} />
+            </button>
+          </div>
           <StockSelector value={symB} onChange={handleChangeB} exclude={symA} accent={U.violet} accentRgb="167,139,250" label="Stock B" isWinner={!!hasData && (scorecardMap[symB]?.score ?? 0) >= (scorecardMap[symA]?.score ?? 0)} options={scorecardMap} />
         </div>
       </div>

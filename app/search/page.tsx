@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Search as SearchIcon, TrendingUp, BarChart3, ExternalLink, Loader2 } from 'lucide-react';
 import { U } from '@/lib/constants';
 import { GlassCard } from '@/components/shared/glass-card';
+import { ErrorMessage } from '@/components/shared/error-message';
 import { SectionTitle } from '@/components/shared/section-title';
 import { useWatchlist } from '@/hooks/use-watchlist';
 import Link from 'next/link';
@@ -12,17 +13,22 @@ export default function SearchPage() {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<{ sym: string; name: string }[]>([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const { watchlist } = useWatchlist();
 
   useEffect(() => {
-    if (!query.trim()) { setResults([]); return; }
+    if (!query.trim()) { setResults([]); setError(null); return; }
     setLoading(true);
+    setError(null);
     const t = setTimeout(async () => {
       try {
         const res = await fetch(`/api/symbols?q=${encodeURIComponent(query)}`);
-        if (!res.ok) return;
-        setResults(await res.json());
-      } catch {} finally {
+        if (!res.ok) throw new Error('Search request failed');
+        const data = await res.json();
+        setResults(data);
+      } catch (e) {
+        setError(e instanceof Error ? e.message : 'Search unavailable');
+      } finally {
         setLoading(false);
       }
     }, 200);
@@ -64,7 +70,13 @@ export default function SearchPage() {
         </GlassCard>
       )}
 
-      {!loading && filtered.length === 0 && query && (
+      {!loading && error && (
+        <div style={{ marginBottom: 14 }}>
+          <ErrorMessage message={error} onRetry={() => { setError(null); setLoading(true); fetch(`/api/symbols?q=${encodeURIComponent(query)}`).then(r => r.json()).then(setResults).catch(e => setError(e instanceof Error ? e.message : 'Search unavailable')).finally(() => setLoading(false)); }} />
+        </div>
+      )}
+
+      {!loading && !error && filtered.length === 0 && query && (
         <GlassCard style={{ padding: "32px", textAlign: "center" }}>
           <div style={{ fontSize: 13, color: U.textMute }}>No results for &quot;{query}&quot;</div>
           <div style={{ fontSize: 11, color: U.textFaint, marginTop: 4 }}>Try a ticker symbol like AAPL or a company name</div>

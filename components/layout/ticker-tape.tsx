@@ -5,7 +5,7 @@ import { useLiveTickers } from '@/hooks/use-live-tickers';
 
 export function TickerTape() {
   const live = useLiveTickers();
-  const vals = Object.values(live);
+  const vals = Object.values(live).filter(t => t.price > 0);
   const items = vals.length ? [...vals, ...vals] : [];
   
   return (

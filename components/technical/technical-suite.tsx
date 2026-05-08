@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import { Circle, AlertTriangle, Search as SearchIcon, X } from 'lucide-react';
 import { U } from '@/lib/constants';
@@ -118,6 +118,9 @@ export default function TechnicalSuite() {
     return allCandles.slice(-n);
   }, [allCandles, tf]);
 
+  const loadRef = useRef<(() => void) | null>(null);
+  const retry = useCallback(() => loadRef.current?.(), []);
+
   useEffect(() => {
     let mounted = true;
     setLoading(true);
@@ -140,6 +143,7 @@ export default function TechnicalSuite() {
         if (mounted) setLoading(false);
       }
     };
+    loadRef.current = load;
     load();
     return () => { mounted = false; };
   }, [sel]);
@@ -287,7 +291,7 @@ export default function TechnicalSuite() {
         </div>
         {error && !candles.length && (
           <div style={{ marginBottom: 8 }}>
-            <ErrorMessage message={error} />
+            <ErrorMessage message={error} onRetry={retry} />
           </div>
         )}
         <CandleChart data={candles} loading={loading} />

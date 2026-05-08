@@ -1,21 +1,41 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Settings as SettingsIcon, Server, Palette, CheckCircle, XCircle, BookmarkPlus, Trash2, Plus } from 'lucide-react';
+import { Settings as SettingsIcon, Server, Palette, CheckCircle, XCircle, BookmarkPlus, Trash2, Plus, RefreshCw } from 'lucide-react';
 import { U } from '@/lib/constants';
 import { GlassCard } from '@/components/shared/glass-card';
 import { SectionTitle } from '@/components/shared/section-title';
 import { useWatchlist } from '@/hooks/use-watchlist';
+import { useToast } from '@/components/shared/toast-provider';
 
 export default function SettingsPage() {
   const [conn, setConn] = useState<Record<string, boolean>>({});
   const { watchlist, addSymbol, removeSymbol, ready } = useWatchlist();
   const [addQuery, setAddQuery] = useState('');
   const [addResults, setAddResults] = useState<{ sym: string; name: string }[]>([]);
+  const [clearing, setClearing] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     fetch('/api/settings').then(r => r.json()).then(setConn).catch(() => {});
   }, []);
+
+  const clearCache = async () => {
+    setClearing(true);
+    try {
+      const res = await fetch('/api/cache', { method: 'DELETE' });
+      const data = await res.json();
+      if (data.ok) {
+        toast('success', `Cleared ${data.cleared} cached candle files`);
+      } else {
+        toast('error', data.error || 'Failed to clear cache');
+      }
+    } catch {
+      toast('error', 'Cache clear request failed');
+    } finally {
+      setClearing(false);
+    }
+  };
 
   useEffect(() => {
     if (!addQuery.trim()) { setAddResults([]); return; }
@@ -58,7 +78,7 @@ export default function SettingsPage() {
         {addQuery && (
           <div style={{ marginBottom: 12, maxHeight: 160, overflow: "auto", background: U.glassLo, borderRadius: 10, border: `1px solid ${U.border}` }}>
             {addResults.map(r => (
-              <div key={r.sym} onClick={() => { addSymbol(r.sym, r.name); setAddQuery(''); setAddResults([]); }}
+              <div key={r.sym} onClick={() => { addSymbol(r.sym, r.name); setAddQuery(''); setAddResults([]); toast('success', `${r.sym} added to watchlist`); }}
                 style={{ padding: "8px 12px", cursor: "pointer", borderBottom: `1px solid ${U.border}`, display: "flex", alignItems: "center", gap: 8 }}
                 onMouseEnter={e => (e.currentTarget.style.background = U.glass)}
                 onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
@@ -75,7 +95,7 @@ export default function SettingsPage() {
           <div key={s.sym} style={{ display: "flex", alignItems: "center", gap: 10, padding: "6px 0", borderBottom: `1px solid ${U.border}` }}>
             <span style={{ fontSize: 12, fontWeight: 700, color: U.text, width: 52 }}>{s.sym}</span>
             <span style={{ fontSize: 11, color: U.textMute, flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{s.name}</span>
-            <button onClick={() => removeSymbol(s.sym)} style={{ background: "transparent", border: "none", cursor: "pointer", color: U.textFaint, padding: 4 }}>
+            <button onClick={() => { removeSymbol(s.sym); toast('info', `${s.sym} removed from watchlist`); }} style={{ background: "transparent", border: "none", cursor: "pointer", color: U.textFaint, padding: 4 }}>
               <Trash2 size={12} />
             </button>
           </div>
@@ -109,6 +129,23 @@ export default function SettingsPage() {
             </div>
           );
         })}
+        <div style={{ marginTop: 14, paddingTop: 14, borderTop: `1px solid ${U.border}`, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div>
+            <div style={{ fontSize: 12, fontWeight: 600, color: U.text }}>Candle Cache</div>
+            <div style={{ fontSize: 10, color: U.textMute }}>Clears cached historical data, forcing fresh API calls</div>
+          </div>
+          <button onClick={clearCache} disabled={clearing} style={{
+            display: "flex", alignItems: "center", gap: 6,
+            padding: "8px 14px", borderRadius: 10,
+            border: `1px solid ${U.borderHi}`,
+            background: U.glassHi, color: clearing ? U.textMute : U.text,
+            fontSize: 11, fontWeight: 600, cursor: clearing ? "not-allowed" : "pointer",
+            opacity: clearing ? 0.6 : 1, transition: "all .15s"
+          }}>
+            <RefreshCw size={12} style={{ animation: clearing ? "spin .8s linear infinite" : "none" }} />
+            {clearing ? "Clearing..." : "Clear Cache"}
+          </button>
+        </div>
       </GlassCard>
 
       <GlassCard style={{ padding: "20px 22px" }}>
