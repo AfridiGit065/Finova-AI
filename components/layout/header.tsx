@@ -1,11 +1,12 @@
 'use client';
 
-import { Menu, X, Search, Bell, Settings } from 'lucide-react';
+import { Menu, X, Search, Settings } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { U } from '@/lib/constants';
 import { Btn } from '@/components/shared/btn';
 import { NAV } from './sidebar';
+import { useResponsive } from '@/hooks/use-responsive';
 
 export const SUBS: Record<string, string> = {
   "/dashboard": "Live market intelligence dashboard",
@@ -24,6 +25,7 @@ interface HeaderProps {
 }
 
 export function Header({ sidebarOpen, setSidebarOpen }: HeaderProps) {
+  const { isMobile } = useResponsive();
   const pathname = usePathname();
   const activeNav = NAV.find(n => n.href === pathname) || NAV[0];
   const sub = SUBS[pathname] || SUBS["/dashboard"];
@@ -49,35 +51,27 @@ export function Header({ sidebarOpen, setSidebarOpen }: HeaderProps) {
         </button>
         <div style={{ flex: 1, minWidth: 0 }}>
           <h1 style={{
-            margin: 0, fontSize: 18, fontWeight: 700, color: U.text,
+            margin: 0, fontSize: "var(--header-title-s)" as any, fontWeight: 700, color: U.text,
             letterSpacing: "-0.025em", lineHeight: 1.2
           }}>{activeNav.label}</h1>
           <div style={{
             fontSize: 11, color: U.textMute, marginTop: 2,
-            overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"
+            overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+            visibility: "var(--header-sub-vis)" as any,
           }}>{sub}</div>
         </div>
-        <div style={{ display: "flex", gap: 7, flexShrink: 0 }}>
-          <Link href="/search"><Btn variant="glass" size="sm"><Search size={11} /> Search</Btn></Link>
-          <Link href="/notifications">
-            <button style={{
-              width: 34, height: 34, borderRadius: 10,
-              background: U.glass,
-              backdropFilter: "blur(24px) saturate(150%)",
-              border: `1px solid ${U.border}`,
-              display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer"
-            }}>
-              <Bell size={13} color={U.textDim} />
-            </button>
-          </Link>
+        <div style={{ display: "flex", gap: 7, flexShrink: 0, alignItems: "center" }}>
+          {isMobile ? (
+            <Link href="/search">
+              <button style={{ width: 34, height: 34, borderRadius: 10, background: U.glass, backdropFilter: "blur(24px) saturate(150%)", border: `1px solid ${U.border}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+                <Search size={13} color={U.textDim} />
+              </button>
+            </Link>
+          ) : (
+            <Link href="/search"><Btn variant="glass" size="sm"><Search size={11} /> Search</Btn></Link>
+          )}
           <Link href="/settings">
-            <button style={{
-              width: 34, height: 34, borderRadius: 10,
-              background: U.glass,
-              backdropFilter: "blur(24px) saturate(150%)",
-              border: `1px solid ${U.border}`,
-              display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer"
-            }}>
+            <button style={{ width: 34, height: 34, borderRadius: 10, background: U.glass, backdropFilter: "blur(24px) saturate(150%)", border: `1px solid ${U.border}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
               <Settings size={13} color={U.textDim} />
             </button>
           </Link>
