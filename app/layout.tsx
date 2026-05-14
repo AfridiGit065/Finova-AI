@@ -12,6 +12,7 @@ import { ToastProvider } from '@/components/shared/toast-provider';
 import { ThemeProvider } from '@/components/shared/theme-provider';
 import { U } from '@/lib/constants';
 import { useResponsive } from '@/hooks/use-responsive';
+import { SupportChat } from '@/components/shared/support-chat';
 import "./globals.css";
 
 const MOBILE_NAV = [
@@ -77,6 +78,7 @@ export default function RootLayout({
             </div>
           )}
         </div>
+        <SupportChat />
         </ThemeProvider>
       </body>
     </html>
