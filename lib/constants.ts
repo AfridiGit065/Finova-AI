@@ -24,6 +24,11 @@ export const U = {
   down:        "var(--down)",
   navBg:       "var(--nav-bg)",
   headerBg:    "var(--header-bg)",
+  cardBg:      "var(--card-bg)",
+  cardShadow:  "var(--card-shadow)",
+  cardBorder:  "var(--card-border)",
+  insetShadow: "var(--inset-shadow)",
+  inputBg:     "var(--input-bg)",
 };
 
 export const TICKERS = [

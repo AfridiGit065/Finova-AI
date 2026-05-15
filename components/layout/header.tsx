@@ -55,7 +55,7 @@ export function Header({ sidebarOpen, setSidebarOpen }: HeaderProps) {
             letterSpacing: "-0.025em", lineHeight: 1.2
           }}>{activeNav.label}</h1>
           <div style={{
-            fontSize: 11, color: U.textMute, marginTop: 2,
+            fontSize: 12, color: U.textMute, marginTop: 2,
             overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
             visibility: "var(--header-sub-vis)" as any,
           }}>{sub}</div>
@@ -63,17 +63,15 @@ export function Header({ sidebarOpen, setSidebarOpen }: HeaderProps) {
         <div style={{ display: "flex", gap: 7, flexShrink: 0, alignItems: "center" }}>
           {isMobile ? (
             <Link href="/search">
-              <button style={{ width: 34, height: 34, borderRadius: 10, background: U.glass, backdropFilter: "blur(24px) saturate(150%)", border: `1px solid ${U.border}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
-                <Search size={13} color={U.textDim} />
+              <button style={{ width: 36, height: 36, borderRadius: 10, background: U.glass, backdropFilter: "blur(24px) saturate(150%)", border: `1px solid ${U.border}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+                <Search size={14} color={U.textDim} />
               </button>
             </Link>
           ) : (
-            <Link href="/search"><Btn variant="glass" size="sm"><Search size={11} /> Search</Btn></Link>
+            <Link href="/search"><Btn variant="glass" size="md"><Search size={13} /> Search</Btn></Link>
           )}
           <Link href="/settings">
-            <button style={{ width: 34, height: 34, borderRadius: 10, background: U.glass, backdropFilter: "blur(24px) saturate(150%)", border: `1px solid ${U.border}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
-              <Settings size={13} color={U.textDim} />
-            </button>
+            <Btn variant="glass" size="md"><Settings size={13} /> Settings</Btn>
           </Link>
         </div>
       </div>

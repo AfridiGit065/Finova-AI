@@ -1,0 +1,44 @@
+'use client';
+
+import { U } from '@/lib/constants';
+
+interface CubeLogoProps {
+  size?: number;
+}
+
+export function CubeLogo({ size = 28 }: CubeLogoProps) {
+  const iconSize = Math.round(size * 0.6);
+
+  return (
+    <div style={{
+      position: "relative", width: size, height: size, flexShrink: 0,
+      display: "flex", alignItems: "center", justifyContent: "center",
+    }}>
+      {/* orange-green-blue gradient glow */}
+      <div style={{
+        position: "absolute", inset: -4, borderRadius: "50%",
+        background: "conic-gradient(from 90deg, #f97316, #22c55e, #3b82f6, #f97316)",
+        filter: "blur(10px)", opacity: 0.7,
+        animation: "spin 4s linear infinite",
+      }} />
+      {/* round glassy background */}
+      <div style={{
+        position: "absolute", inset: 0, borderRadius: "50%",
+        background: U.cardBg, backdropFilter: "blur(8px)",
+        WebkitBackdropFilter: "blur(8px)", border: U.cardBorder,
+        boxShadow: U.cardShadow,
+      }} />
+      {/* cube-transparent icon in solid off-white */}
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="rgba(255,255,255,0.9)"
+        strokeWidth={1.5}
+        style={{ position: "relative", zIndex: 1, width: iconSize, height: iconSize }}
+      >
+        <path strokeLinecap="round" strokeLinejoin="round" d="m21 7.5-2.25-1.313M21 7.5v2.25m0-2.25-2.25 1.313M3 7.5l2.25-1.313M3 7.5l2.25 1.313M3 7.5v2.25m9 3 2.25-1.313M12 12.75l-2.25-1.313M12 12.75V15m0 6.75 2.25-1.313M12 21.75V19.5m0 2.25-2.25-1.313m0-16.875L12 2.25l2.25 1.313M21 14.25v2.25l-2.25 1.313m-13.5 0L3 16.5v-2.25" />
+      </svg>
+    </div>
+  );
+}

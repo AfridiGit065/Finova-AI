@@ -8,6 +8,7 @@ import {
 import { U } from '@/lib/constants';
 import { useMarketStatus } from '@/hooks/use-market-status';
 
+
 export const NAV = [
   { id: "dashboard", label: "Overview", icon: LayoutDashboard, href: "/dashboard" },
   { id: "technical", label: "Technical Analysis", icon: TrendingUp, href: "/technical" },
@@ -60,13 +61,7 @@ export function Sidebar({ open, mobile, onClose }: SidebarProps) {
             fontSize: 17, fontWeight: 800, color: U.text,
             letterSpacing: "-0.03em", lineHeight: 1, display: "flex", alignItems: "center", gap: 8
           }}>
-            <div style={{
-              width: 22, height: 22, borderRadius: 6,
-              background: `linear-gradient(135deg,${U.cyan},${U.violet})`,
-              display: "flex", alignItems: "center", justifyContent: "center",
-              boxShadow: `0 0 14px rgba(34,211,238,0.4)`, animation: "float 3s ease-in-out infinite",
-              fontSize: 12, flexShrink: 0
-            }}>◈</div>
+            <img src="/nexus.png" alt="Nexus" style={{ width: 26, height: 26, borderRadius: 6, flexShrink: 0 }} />
             NEXUS
           </div>
           <div style={{

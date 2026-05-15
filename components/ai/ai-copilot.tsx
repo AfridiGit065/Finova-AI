@@ -7,6 +7,7 @@ import { computeScorecard, type ScorecardData } from '@/lib/scorecard-utils';
 import type { NormalizedFundamentals } from '@/lib/providers/types';
 import { SP500_TOP100 } from '@/lib/symbols/sp500-top100';
 import { useResponsive } from '@/hooks/use-responsive';
+import { CubeLogo } from '@/components/shared/cube-logo';
 
 const COPILOT_SYMBOLS = SP500_TOP100.slice(0, 10).map(s => s.sym);
 interface SearchResult { sym: string; name: string; }
@@ -180,37 +181,37 @@ export default function AICopilot() {
 
   const scoresPanel = (
     <div style={{ display: "flex", flexDirection: "column", flex: 1, overflow: "hidden" }}>
-      <div style={{ padding: isMobile ? "10px 12px" : "14px 16px", borderBottom: `1px solid ${U.border}`, background: `linear-gradient(180deg,rgba(167,139,250,0.06),transparent)`, flexShrink: 0 }}>
-        {!isMobile && <div style={{ fontSize: 10, fontWeight: 700, color: U.textMute, textTransform: "uppercase", letterSpacing: "0.14em", display: "flex", alignItems: "center", gap: 6, marginBottom: 2 }}><Star size={10} color={U.violet} /> Scorecards</div>}
+      <div style={{ padding: isMobile ? "10px 14px" : "14px 18px", borderBottom: `1px solid ${U.border}`, flexShrink: 0 }}>
+        {!isMobile && <div style={{ fontSize: 10, fontWeight: 600, color: U.textMute, textTransform: "uppercase", letterSpacing: "0.14em", display: "flex", alignItems: "center", gap: 6, marginBottom: 2 }}><Star size={10} color={U.violet} /> Scorecards</div>}
         {!isMobile && <div style={{ fontSize: 11, color: U.textFaint, marginBottom: 8 }}>AI-scored investment signals</div>}
-        <div ref={searchRef} style={{ display: "flex", alignItems: "center", gap: 6, background: U.glassLo, border: `1px solid ${searchQuery ? U.violet : U.border}`, borderRadius: 8, padding: "6px 10px", transition: "all .15s" }}>
+        <div ref={searchRef} style={{ display: "flex", alignItems: "center", gap: 6, background: U.inputBg, border: `1px solid ${searchQuery ? U.violet : U.border}`, borderRadius: 12, padding: "8px 12px", transition: "all .15s", boxShadow: U.insetShadow }}>
           <SearchIcon size={11} color={searchQuery ? U.violet : U.textMute} />
           <input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search any symbol..." style={{ flex: 1, background: "transparent", border: "none", outline: "none", color: U.text, fontSize: 11 }} />
           {searching && <Loader2 size={11} color={U.textMute} style={{ animation: "spin 1s linear infinite" }} />}
           {searchQuery && !searching && <X size={12} color={U.textMute} style={{ cursor: "pointer", flexShrink: 0 }} onClick={() => { setSearchQuery(''); setSearchResults([]); }} />}
         </div>
       </div>
-      <div style={{ flex: 1, overflowY: "auto", padding: isMobile ? "8px 10px" : "12px 12px" }}>
+      <div style={{ flex: 1, overflowY: "auto", padding: isMobile ? "8px 12px" : "12px 14px" }}>
         {searchQuery.trim() ? (
           <>
             {Object.entries(scorecardMap).filter(([sym, d]) => sym.toLowerCase().includes(searchQuery.toLowerCase()) || d.name.toLowerCase().includes(searchQuery.toLowerCase())).map(([sym, d]) => (
               <ScoreCard key={sym} ticker={sym} data={d} expanded={exp === sym} onToggle={() => se(exp === sym ? null : sym)} />
             ))}
             {searchResults.filter(r => !scorecardMap[r.sym]).length > 0 && Object.entries(scorecardMap).filter(([sym, d]) => sym.toLowerCase().includes(searchQuery.toLowerCase()) || d.name.toLowerCase().includes(searchQuery.toLowerCase())).length > 0 && (
-              <div style={{ padding: "8px 14px 4px", fontSize: 9, fontWeight: 700, color: U.textFaint, textTransform: "uppercase", letterSpacing: "0.1em" }}>More results from search</div>
+              <div style={{ padding: "8px 14px 4px", fontSize: 9, fontWeight: 600, color: U.textFaint, textTransform: "uppercase", letterSpacing: "0.1em" }}>More results from search</div>
             )}
             {searchResults.filter(r => !scorecardMap[r.sym]).map(r => {
               const loading = loadingSymbols.has(r.sym);
               return (
-                <div key={r.sym} onClick={() => loadSymbol(r.sym)} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 14px", cursor: "pointer", background: U.glass, border: `1px solid ${U.border}`, borderRadius: 10, marginBottom: 6, transition: "all .15s" }}
-                  onMouseEnter={e => { e.currentTarget.style.background = U.glassHi; e.currentTarget.style.borderColor = U.borderHi; }}
-                  onMouseLeave={e => { e.currentTarget.style.background = U.glass; e.currentTarget.style.borderColor = U.border; }}>
+                <div key={r.sym} onClick={() => loadSymbol(r.sym)} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 14px", cursor: "pointer", background: U.cardBg, boxShadow: U.cardShadow, border: U.cardBorder, borderRadius: 12, marginBottom: 6, transition: "all .15s" }}
+                  onMouseEnter={e => { e.currentTarget.style.background = "var(--glass-hi)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = U.cardBg; }}>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: U.text, letterSpacing: "-0.01em" }}>{r.sym}</div>
+                    <div style={{ fontSize: 14, fontWeight: 600, color: U.text, fontFamily: "'Inter',sans-serif", letterSpacing: "-0.02em" }}>{r.sym}</div>
                     <div style={{ fontSize: 10, color: U.textMute, marginTop: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.name}</div>
                   </div>
                   {loading ? <Loader2 size={12} color={U.cyan} style={{ animation: "spin 1s linear infinite" }} />
-                    : <span style={{ width: 26, height: 26, borderRadius: 8, background: U.cyanSoft, border: `1px solid rgba(34,211,238,0.25)`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, cursor: "pointer" }}><Plus size={13} color={U.cyan} /></span>}
+                    : <span style={{ width: 26, height: 26, borderRadius: 8, background: U.cardBg, border: "1px solid rgba(34,211,238,0.2)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, cursor: "pointer" }}><Plus size={13} color={U.cyan} /></span>}
                 </div>
               );
             })}
@@ -221,11 +222,11 @@ export default function AICopilot() {
           ))
         )}
         {searchQuery.trim() && !searching && searchResults.length === 0 && (
-          <div style={{ padding: "20px", textAlign: "center", fontSize: 11, color: U.textMute }}>No matching tickers</div>
+          <div style={{ padding: "24px", textAlign: "center", fontSize: 11, color: U.textMute }}>No matching tickers</div>
         )}
       </div>
       {!isMobile && (
-        <div style={{ padding: "10px 14px", borderTop: `1px solid ${U.border}`, flexShrink: 0, background: U.glassLo }}>
+        <div style={{ padding: "10px 16px", borderTop: `1px solid ${U.border}`, flexShrink: 0 }}>
           <div style={{ fontSize: 10, color: U.textFaint, lineHeight: 1.5, display: "flex", alignItems: "flex-start", gap: 6 }}>
             <Lightbulb size={10} color={U.violet} style={{ flexShrink: 0, marginTop: 2 }} />
             Click a scorecard to expand its full financial breakdown, then ask the Copilot about it.
@@ -237,72 +238,76 @@ export default function AICopilot() {
 
   const chatPanel = (
     <div style={{ display: "flex", flexDirection: "column", flex: 1, overflow: "hidden", position: "relative" }}>
-      <div style={{ padding: isMobile ? "0 12px" : "0 18px", height: isMobile ? 44 : 52, borderBottom: `1px solid ${U.border}`, display: "flex", alignItems: "center", gap: 10, background: `linear-gradient(135deg,rgba(34,211,238,0.05),rgba(167,139,250,0.05))`, flexShrink: 0 }}>
-        <div style={{ width: isMobile ? 26 : 30, height: isMobile ? 26 : 30, borderRadius: "50%", flexShrink: 0, background: `linear-gradient(135deg,${U.cyan},${U.violet})`, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: `0 0 16px ${U.cyanSoft}` }}>
-          <Sparkles size={isMobile ? 11 : 13} color="white" />
+      <div style={{ padding: isMobile ? "0 14px" : "0 20px", height: isMobile ? 48 : 56, borderBottom: `1px solid ${U.border}`, display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+        <div style={{ position: "relative", width: isMobile ? 28 : 32, height: isMobile ? 28 : 32, flexShrink: 0 }}>
+          <div style={{ position: "absolute", inset: -4, background: `radial-gradient(ellipse, ${U.cyanSoft}, transparent 70%)`, borderRadius: "50%" }} />
+          <CubeLogo size={isMobile ? 28 : 32} />
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: isMobile ? 12 : 13, fontWeight: 700, color: U.text, lineHeight: 1 }}>NEXUS Copilot</div>
-          <div style={{ fontSize: 10, color: U.textMute, marginTop: 2, display: "flex", alignItems: "center", gap: 5 }}>
-            <span style={{ width: 5, height: 5, borderRadius: "50%", background: U.emerald, display: "inline-block", boxShadow: `0 0 5px ${U.emerald}`, animation: "pulse-dot 2s ease infinite" }} />
+          <div style={{ fontSize: isMobile ? 12 : 14, fontWeight: 600, color: U.text, lineHeight: 1, fontFamily: "'Inter',sans-serif", letterSpacing: "-0.02em" }}>AI Copilot</div>
+          <div style={{ fontSize: 10, color: U.textMute, marginTop: 3, display: "flex", alignItems: "center", gap: 5 }}>
+            <span style={{ width: 5, height: 5, borderRadius: "50%", background: U.emerald, display: "inline-block", boxShadow: `0 0 6px ${U.emeraldSoft}`, animation: "pulse-dot 2s ease infinite" }} />
             {isMobile ? "AI financial intel" : "Online \u00B7 AI financial intelligence"}
           </div>
         </div>
         {!isMobile && (
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <div style={{ fontSize: 10, color: U.textMute, background: U.glassLo, border: `1px solid ${U.border}`, borderRadius: 6, padding: "3px 8px", display: "flex", alignItems: "center", gap: 5 }}>
+            <div style={{ fontSize: 10, color: U.textMute, background: U.cardBg, border: U.cardBorder, borderRadius: 12, padding: "4px 10px", display: "flex", alignItems: "center", gap: 5, boxShadow: U.cardShadow }}>
               <Bot size={10} color={U.textMute} />{msgs.length} messages
             </div>
-            <button onClick={clearChat} style={{ fontSize: 10, color: U.textMute, cursor: "pointer", background: U.glassLo, border: `1px solid ${U.border}`, borderRadius: 6, padding: "4px 9px", transition: "all .15s" }}>\u2715 Clear</button>
+            <button onClick={clearChat} style={{ fontSize: 10, color: U.textMute, cursor: "pointer", background: U.cardBg, border: U.cardBorder, borderRadius: 12, padding: "5px 10px", transition: "all .15s", boxShadow: U.cardShadow }}>{'\u2715'} Clear</button>
           </div>
         )}
       </div>
-      <div style={{ flex: 1, overflowY: "auto", padding: isMobile ? "12px 12px 8px" : "20px 20px 12px", display: "flex", flexDirection: "column", gap: isMobile ? 12 : 16 }}>
+      <div style={{ flex: 1, overflowY: "auto", padding: isMobile ? "12px" : "20px", display: "flex", flexDirection: "column", gap: isMobile ? 10 : 14 }}>
         {msgs.length === 1 && (
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: isMobile ? "16px 12px 0" : "32px 20px 0", gap: 14, animation: "fi .4s ease" }}>
-            <div style={{ width: isMobile ? 44 : 56, height: isMobile ? 44 : 56, borderRadius: "50%", background: `linear-gradient(135deg,${U.cyan},${U.violet})`, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: `0 0 32px ${U.cyanSoft}` }}>
-              <Sparkles size={isMobile ? 17 : 22} color="white" />
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: isMobile ? "32px 12px 0" : "60px 20px 0", gap: 20, animation: "fi .4s ease" }}>
+            <div style={{ position: "relative", width: isMobile ? 56 : 72, height: isMobile ? 56 : 72 }}>
+              <div style={{ position: "absolute", inset: -12, background: `radial-gradient(ellipse, ${U.cyanSoft}, transparent 70%)`, borderRadius: "50%" }} />
+              <div style={{ width: "100%", height: "100%", borderRadius: "50%", background: U.cardBg, border: U.cardBorder, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", zIndex: 1, boxShadow: U.cardShadow }}>
+                <CubeLogo size={isMobile ? 34 : 44} />
+              </div>
             </div>
             <div style={{ textAlign: "center" }}>
-              <div style={{ fontSize: isMobile ? 14 : 16, fontWeight: 700, color: U.text, marginBottom: 4 }}>Your AI Financial Copilot</div>
-              <div style={{ fontSize: 11, color: U.textMute, lineHeight: 1.6, maxWidth: 320 }}>Ask anything about stocks, valuations, market signals, or investment strategies.</div>
+              <div style={{ fontSize: isMobile ? 15 : 17, fontWeight: 600, color: U.text, marginBottom: 6, fontFamily: "'Inter',sans-serif", letterSpacing: "-0.02em" }}>Your AI Financial Copilot</div>
+              <div style={{ fontSize: 12, color: U.textMute, lineHeight: 1.6, maxWidth: 340 }}>Ask anything about stocks, valuations, market signals, or investment strategies.</div>
             </div>
           </div>
         )}
         {msgs.map((m, i) => (
           <div key={i} style={{ display: "flex", flexDirection: m.role === "user" ? "row-reverse" : "row", alignItems: "flex-start", gap: isMobile ? 8 : 10, animation: "fi .22s ease" }}>
-            {m.role === "assistant" && <div style={{ width: isMobile ? 24 : 28, height: isMobile ? 24 : 28, background: `linear-gradient(135deg,${U.cyan},${U.violet})`, borderRadius: "50%", flexShrink: 0, marginTop: 2, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: `0 0 10px ${U.cyanSoft}` }}><Bot size={isMobile ? 10 : 12} color="white" /></div>}
-            {m.role === "user" && <div style={{ width: isMobile ? 24 : 28, height: isMobile ? 24 : 28, background: U.glassHi, border: `1px solid ${U.border}`, borderRadius: "50%", flexShrink: 0, marginTop: 2, display: "flex", alignItems: "center", justifyContent: "center", fontSize: isMobile ? 9 : 11, fontWeight: 700, color: U.text }}>U</div>}
-            <div style={{ maxWidth: isMobile ? "82%" : "72%", padding: isMobile ? "10px 13px" : "11px 15px", fontSize: isMobile ? 12.5 : 13, lineHeight: 1.7, color: U.text, borderRadius: m.role === "user" ? "16px 4px 16px 16px" : "4px 16px 16px 16px", background: m.role === "user" ? U.glassHi : `linear-gradient(135deg,${U.cyanSoft},${U.violetSoft})`, border: `1px solid ${m.role === "user" ? U.borderHi : U.border}`, backdropFilter: "blur(10px)", boxShadow: `0 2px 16px rgba(0,0,0,0.05)` }} dangerouslySetInnerHTML={{ __html: md(m.content) }} />
+            {m.role === "assistant" && <CubeLogo size={isMobile ? 24 : 28} />}
+            {m.role === "user" && <div style={{ width: isMobile ? 24 : 28, height: isMobile ? 24 : 28, background: U.cardBg, border: U.cardBorder, borderRadius: "50%", flexShrink: 0, marginTop: 2, display: "flex", alignItems: "center", justifyContent: "center", fontSize: isMobile ? 9 : 11, fontWeight: 600, color: U.textDim }}>U</div>}
+            <div style={{ maxWidth: isMobile ? "82%" : "72%", padding: isMobile ? "10px 14px" : "12px 16px", fontSize: isMobile ? 12.5 : 13, lineHeight: 1.7, color: U.text, borderRadius: 12, background: m.role === "user" ? U.glass : U.cardBg, border: U.cardBorder, boxShadow: U.cardShadow }} dangerouslySetInnerHTML={{ __html: md(m.content) }} />
           </div>
         ))}
         {loading && streamBuf && (
           <div style={{ display: "flex", alignItems: "flex-start", gap: isMobile ? 8 : 10, animation: "fi .2s ease" }}>
-            <div style={{ width: isMobile ? 24 : 28, height: isMobile ? 24 : 28, background: `linear-gradient(135deg,${U.cyan},${U.violet})`, borderRadius: "50%", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}><Bot size={isMobile ? 10 : 12} color="white" /></div>
-            <div style={{ maxWidth: isMobile ? "82%" : "72%", padding: isMobile ? "10px 13px" : "11px 15px", fontSize: isMobile ? 12.5 : 13, lineHeight: 1.7, color: U.text, borderRadius: "4px 16px 16px 16px", background: `linear-gradient(135deg,${U.cyanSoft},${U.violetSoft})`, border: `1px solid ${U.borderHi}`, backdropFilter: "blur(10px)", boxShadow: `0 2px 16px rgba(0,0,0,0.05)` }} dangerouslySetInnerHTML={{ __html: md(streamBuf) }} />
+            <CubeLogo size={isMobile ? 24 : 28} />
+            <div style={{ maxWidth: isMobile ? "82%" : "72%", padding: isMobile ? "10px 14px" : "12px 16px", fontSize: isMobile ? 12.5 : 13, lineHeight: 1.7, color: U.text, borderRadius: 12, background: U.cardBg, border: U.cardBorder, boxShadow: U.cardShadow }} dangerouslySetInnerHTML={{ __html: md(streamBuf) }} />
           </div>
         )}
         {loading && !streamBuf && (
           <div style={{ display: "flex", alignItems: "flex-start", gap: isMobile ? 8 : 10, animation: "fi .2s ease" }}>
-            <div style={{ width: isMobile ? 24 : 28, height: isMobile ? 24 : 28, background: `linear-gradient(135deg,${U.cyan},${U.violet})`, borderRadius: "50%", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}><Bot size={isMobile ? 10 : 12} color="white" /></div>
-            <div style={{ padding: "13px 18px", background: `linear-gradient(135deg,${U.cyanSoft},${U.violetSoft})`, border: `1px solid ${U.border}`, borderRadius: "4px 16px 16px 16px", display: "flex", alignItems: "center", gap: 5 }}>
+            <CubeLogo size={isMobile ? 24 : 28} />
+            <div style={{ padding: "14px 18px", background: U.cardBg, border: U.cardBorder, borderRadius: 12, display: "flex", alignItems: "center", gap: 6, boxShadow: U.cardShadow }}>
               {[0, 1, 2].map(j => <span key={j} style={{ width: 6, height: 6, borderRadius: "50%", background: `linear-gradient(135deg,${U.cyan},${U.violet})`, display: "inline-block", animation: `dp 1.4s ease ${j * 0.18}s infinite` }} />)}
-              <span style={{ fontSize: 11, color: U.textMute, marginLeft: 4 }}>Analyzing\u2026</span>
+              <span style={{ fontSize: 11, color: U.textMute, marginLeft: 4, fontWeight: 500 }}>Analyzing{'\u2026'}</span>
             </div>
           </div>
         )}
         <div ref={bot} />
       </div>
-      <div className="chip-scroll" style={{ padding: isMobile ? "6px 12px" : "8px 16px", borderTop: `1px solid ${U.border}`, display: "flex", gap: 6, overflowX: "auto", flexShrink: 0, background: U.glassLo }}>
-        <div style={{ fontSize: 9, fontWeight: 700, color: U.textFaint, textTransform: "uppercase", letterSpacing: "0.12em", flexShrink: 0, alignSelf: "center", marginRight: 4 }}>Quick:</div>
+      <div className="chip-scroll" style={{ padding: isMobile ? "6px 14px" : "8px 18px", borderTop: `1px solid ${U.border}`, display: "flex", gap: 6, overflowX: "auto", flexShrink: 0 }}>
+        <div style={{ fontSize: 9, fontWeight: 600, color: U.textFaint, textTransform: "uppercase", letterSpacing: "0.12em", flexShrink: 0, alignSelf: "center", marginRight: 4 }}>Quick:</div>
         {dynamicPrompts.map(p => (
-          <button key={p} onClick={() => send(p)} style={{ padding: "5px 12px", borderRadius: 999, border: `1px solid ${U.border}`, background: U.glassLo, color: U.textDim, cursor: "pointer", fontSize: 11, fontWeight: 500, whiteSpace: "nowrap", flexShrink: 0, transition: "all .15s" }}>{p}</button>
+          <button key={p} onClick={() => send(p)} style={{ padding: "6px 16px", borderRadius: 999, border: U.cardBorder, background: U.cardBg, color: U.textDim, cursor: "pointer", fontSize: 11, fontWeight: 500, whiteSpace: "nowrap", flexShrink: 0, transition: "all .15s", boxShadow: U.cardShadow }}>{p}</button>
         ))}
       </div>
-      <div style={{ padding: isMobile ? "8px 12px" : "12px 16px", borderTop: `1px solid ${U.border}`, background: U.headerBg, flexShrink: 0 }}>
-        <div style={{ display: "flex", alignItems: "flex-end", gap: 10, background: inputFocus ? U.glassHi : U.glass, border: `1px solid ${inputFocus ? U.cyan : U.border}`, borderRadius: 14, padding: isMobile ? "8px 12px" : "10px 14px", transition: "all .2s" }}>
-          <textarea ref={inpRef} value={inp} onChange={e => { si(e.target.value); e.target.style.height = "auto"; e.target.style.height = Math.min(e.target.scrollHeight, 120) + "px"; }} onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }} onFocus={() => sif(true)} onBlur={() => sif(false)} placeholder="Ask about any stock, valuation, or market signal\u2026" rows={1} style={{ flex: 1, background: "transparent", border: "none", outline: "none", color: U.text, fontSize: isMobile ? 12.5 : 13, lineHeight: 1.6, resize: "none", overflow: "hidden", minHeight: 22, maxHeight: 120 }} />
-          <button onClick={() => send()} disabled={loading || !inp.trim()} style={{ width: 34, height: 34, borderRadius: 10, border: "none", background: inp.trim() && !loading ? `linear-gradient(135deg,${U.cyan},${U.violet})` : U.glass, display: "flex", alignItems: "center", justifyContent: "center", cursor: inp.trim() && !loading ? "pointer" : "not-allowed", flexShrink: 0, transition: "all .2s", boxShadow: inp.trim() && !loading ? `0 0 16px ${U.cyanSoft}` : "none" }}><Send size={14} color={inp.trim() && !loading ? "white" : U.textFaint} /></button>
+      <div style={{ padding: isMobile ? "8px 12px" : "12px 18px", borderTop: `1px solid ${U.border}`, flexShrink: 0 }}>
+        <div style={{ display: "flex", alignItems: "flex-end", gap: 10, background: U.inputBg, border: `1px solid ${inputFocus ? U.cyan : U.border}`, borderRadius: 999, padding: isMobile ? "8px 14px" : "10px 16px", transition: "all .2s", boxShadow: inputFocus ? `${U.insetShadow}, 0 0 0 2px ${U.cyanSoft}` : U.insetShadow }}>
+          <textarea ref={inpRef} value={inp} onChange={e => { si(e.target.value); e.target.style.height = "auto"; e.target.style.height = Math.min(e.target.scrollHeight, 80) + "px"; }} onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }} onFocus={() => sif(true)} onBlur={() => sif(false)} placeholder="Ask about any stock, valuation, or market signal..." rows={1} style={{ flex: 1, background: "transparent", border: "none", outline: "none", color: U.text, fontSize: isMobile ? 12.5 : 13, lineHeight: 1.5, resize: "none", overflow: "hidden", minHeight: 22, maxHeight: 80 }} />
+          <button onClick={() => send()} disabled={loading || !inp.trim()} style={{ width: 34, height: 34, borderRadius: 999, border: "none", background: inp.trim() && !loading ? `linear-gradient(135deg,${U.cyan},${U.violet})` : U.glass, display: "flex", alignItems: "center", justifyContent: "center", cursor: inp.trim() && !loading ? "pointer" : "not-allowed", flexShrink: 0, transition: "all .2s", boxShadow: inp.trim() && !loading ? `0 0 16px ${U.cyanSoft}` : "none" }}><Send size={14} color={inp.trim() && !loading ? "white" : U.textFaint} /></button>
         </div>
       </div>
     </div>
@@ -310,12 +315,12 @@ export default function AICopilot() {
 
   if (isMobile) {
     return (
-      <div style={{ display: "flex", flexDirection: "column", height: "100%", overflow: "hidden", borderRadius: 14, border: `1px solid ${U.border}`, background: U.glassLo, paddingBottom: "var(--copilot-pb)" as any }}>
-        <div style={{ display: "flex", padding: "8px 12px", gap: 6, borderBottom: `1px solid ${U.border}`, background: U.headerBg, flexShrink: 0 }}>
-          <button onClick={() => setView('chat')} style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "8px 0", borderRadius: 8, border: "none", cursor: "pointer", fontSize: 11, fontWeight: 600, background: view === 'chat' ? `linear-gradient(135deg,${U.cyanSoft},${U.violetSoft})` : "transparent", color: view === 'chat' ? U.cyan : U.textMute, transition: "all .15s" }}>
+      <div style={{ display: "flex", flexDirection: "column", height: "100%", overflow: "hidden", borderRadius: 14, border: U.cardBorder, background: U.cardBg, boxShadow: U.cardShadow, backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", paddingBottom: "var(--copilot-pb)" as any }}>
+        <div style={{ display: "flex", padding: "8px 12px", gap: 6, borderBottom: `1px solid ${U.border}`, flexShrink: 0 }}>
+          <button onClick={() => setView('chat')} style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "8px 0", borderRadius: 10, border: "none", cursor: "pointer", fontSize: 11, fontWeight: 600, background: view === 'chat' ? U.glassHi : "transparent", color: view === 'chat' ? U.cyan : U.textMute, transition: "all .15s" }}>
             <MessageSquare size={13} /> Chat
           </button>
-          <button onClick={() => setView('scores')} style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "8px 0", borderRadius: 8, border: "none", cursor: "pointer", fontSize: 11, fontWeight: 600, background: view === 'scores' ? `linear-gradient(135deg,${U.cyanSoft},${U.violetSoft})` : "transparent", color: view === 'scores' ? U.cyan : U.textMute, transition: "all .15s" }}>
+          <button onClick={() => setView('scores')} style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "8px 0", borderRadius: 10, border: "none", cursor: "pointer", fontSize: 11, fontWeight: 600, background: view === 'scores' ? U.glassHi : "transparent", color: view === 'scores' ? U.cyan : U.textMute, transition: "all .15s" }}>
             <BarChart3 size={13} /> Scorecards
           </button>
         </div>
@@ -327,11 +332,11 @@ export default function AICopilot() {
   }
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "var(--copilot-cols)" as any, gridTemplateRows: "var(--copilot-rows)" as any, gap: 0, paddingBottom: "var(--copilot-pb)" as any, height: "100%", overflow: "hidden", borderRadius: 14, border: `1px solid ${U.border}`, backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)" }}>
-      <div style={{ display: "flex", flexDirection: "column", borderRight: `1px solid ${U.border}`, background: U.headerBg, overflow: "hidden" }}>
+    <div style={{ display: "grid", gridTemplateColumns: "var(--copilot-cols)" as any, gridTemplateRows: "var(--copilot-rows)" as any, gap: 0, paddingBottom: "var(--copilot-pb)" as any, height: "100%", overflow: "hidden", borderRadius: 14, border: U.cardBorder, background: U.cardBg, boxShadow: U.cardShadow, backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)" }}>
+      <div style={{ display: "flex", flexDirection: "column", borderRight: `1px solid ${U.border}`, overflow: "hidden", background: U.glassLo, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}>
         {scoresPanel}
       </div>
-      <div style={{ display: "flex", flexDirection: "column", background: U.glassLo, overflow: "hidden", position: "relative" }}>
+      <div style={{ display: "flex", flexDirection: "column", overflow: "hidden", position: "relative", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}>
         {chatPanel}
       </div>
     </div>
