@@ -78,7 +78,7 @@ export default function RootLayout({
             </div>
           )}
         </div>
-        <SupportChat />
+        {!isCopilot && <SupportChat />}
         </ThemeProvider>
       </body>
     </html>
