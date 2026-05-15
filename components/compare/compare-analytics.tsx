@@ -165,7 +165,7 @@ function MainContent({ symA, symB, onChangeA, onChangeB, scorecardMap, mounted, 
             marginTop: 12, padding: "16px 18px",
             background: U.glassLo,
             border: `1px solid ${U.border}`,
-            padding: "24px 30px", borderRadius: 16, textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center",
+            borderRadius: 16, textAlign: "start", display: "flex", flexDirection: "column", alignItems: "start",
             boxShadow: `inset 0 1px 0 ${U.glassHi}`
           }}>
             <div style={{
