@@ -74,15 +74,15 @@ export async function fetchCandles(symbol: string, resolution: string, count: nu
   const series = data?.['Time Series (Daily)'];
   if (!series) return [];
   const entries = Object.entries(series)
+    .sort(([dateA], [dateB]) => dateA.localeCompare(dateB))
     .map(([date, vals]: [string, any]) => ({
-      date: new Date(date).toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' }),
+      date: new Date(date).toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' }),
       open: parseFloat(vals['1. open']) || 0,
       high: parseFloat(vals['2. high']) || 0,
       low: parseFloat(vals['3. low']) || 0,
       close: parseFloat(vals['4. close']) || 0,
       volume: parseInt(vals['5. volume']) || 0,
-    }))
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    }));
   return entries.slice(-count);
 }
 

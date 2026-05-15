@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { validateOHLC, sortCandleData, processCandleData, getCandleRange } from './candleUtils';
+import { validateOHLC, sortCandleData, processCandleData, getCandleRange } from '../candleUtils';
 import { NormalizedCandle } from '@/lib/providers/types';
 
 const mockCandle = (overrides?: Partial<NormalizedCandle>): NormalizedCandle => ({
-  date: '1/15',
+  date: '1/15/2025',
   open: 100,
   high: 105,
   low: 95,
@@ -56,32 +56,44 @@ describe('candleUtils', () => {
   });
 
   describe('sortCandleData', () => {
-    it('should sort candles chronologically', () => {
+    it('should sort candles chronologically within same year', () => {
       const candles = [
-        mockCandle({ date: '1/20' }),
-        mockCandle({ date: '1/10' }),
-        mockCandle({ date: '1/15' }),
+        mockCandle({ date: '1/20/2025' }),
+        mockCandle({ date: '1/10/2025' }),
+        mockCandle({ date: '1/15/2025' }),
       ];
       const sorted = sortCandleData(candles);
-      expect(sorted[0].date).toBe('1/10');
-      expect(sorted[1].date).toBe('1/15');
-      expect(sorted[2].date).toBe('1/20');
+      expect(sorted[0].date).toBe('1/10/2025');
+      expect(sorted[1].date).toBe('1/15/2025');
+      expect(sorted[2].date).toBe('1/20/2025');
+    });
+
+    it('should sort cross-year dates correctly (Issue #22)', () => {
+      const candles = [
+        mockCandle({ date: '5/14/2026' }),
+        mockCandle({ date: '12/19/2025' }),
+        mockCandle({ date: '1/15/2026' }),
+      ];
+      const sorted = sortCandleData(candles);
+      expect(sorted[0].date).toBe('12/19/2025');
+      expect(sorted[1].date).toBe('1/15/2026');
+      expect(sorted[2].date).toBe('5/14/2026');
     });
 
     it('should handle invalid dates by placing them at the end', () => {
       const candles = [
-        mockCandle({ date: '1/15' }),
+        mockCandle({ date: '1/15/2025' }),
         mockCandle({ date: 'invalid-date' }),
-        mockCandle({ date: '1/10' }),
+        mockCandle({ date: '1/10/2025' }),
       ];
       const sorted = sortCandleData(candles);
-      expect(sorted[0].date).toBe('1/10');
-      expect(sorted[1].date).toBe('1/15');
+      expect(sorted[0].date).toBe('1/10/2025');
+      expect(sorted[1].date).toBe('1/15/2025');
       expect(sorted[2].date).toBe('invalid-date');
     });
 
     it('should not mutate original array', () => {
-      const candles = [mockCandle({ date: '1/20' }), mockCandle({ date: '1/10' })];
+      const candles = [mockCandle({ date: '1/20/2025' }), mockCandle({ date: '1/10/2025' })];
       const original = JSON.stringify(candles);
       sortCandleData(candles);
       expect(JSON.stringify(candles)).toBe(original);
@@ -91,18 +103,18 @@ describe('candleUtils', () => {
   describe('processCandleData', () => {
     it('should filter invalid candles and sort valid ones', () => {
       const candles = [
-        mockCandle({ date: '1/20' }),
-        mockCandle({ date: '1/10', high: 95 }), // Invalid: high < open
-        mockCandle({ date: '1/15' }),
+        mockCandle({ date: '1/20/2025' }),
+        mockCandle({ date: '1/10/2025', high: 95 }), // Invalid: high < open
+        mockCandle({ date: '1/15/2025' }),
       ];
       const processed = processCandleData(candles);
       expect(processed).toHaveLength(2);
-      expect(processed[0].date).toBe('1/15');
-      expect(processed[1].date).toBe('1/20');
+      expect(processed[0].date).toBe('1/15/2025');
+      expect(processed[1].date).toBe('1/20/2025');
     });
 
     it('should return empty array for null input', () => {
-      expect(processCandleData(null as any)).toEqual([]);
+      expect(processCandleData(null as unknown as NormalizedCandle[])).toEqual([]);
     });
 
     it('should return empty array for empty input', () => {
