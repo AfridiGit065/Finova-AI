@@ -19,7 +19,7 @@ We welcome contributions! Here's how to get started:
 3. **Make your changes** and commit: `git commit -m "feat: description"`
 4. **Push** to your fork and create a **Pull Request**
 
-See [CONTRIBUTING.md](../README.md#contributing) for details.
+See [README.md](./README.md) for additional contribution details.
 
 ---
 

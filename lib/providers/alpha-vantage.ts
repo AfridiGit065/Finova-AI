@@ -90,9 +90,9 @@ export async function fetchFundamentals(symbol: string): Promise<NormalizedFunda
   const data = await fetchJson({ function: 'OVERVIEW', symbol });
   if (!data?.Symbol) return null;
   const peRatio = parseFloat(data.PERatio) || 0;
-  const roe = parseFloat(data.ReturnOnEquityTTM) || 0;
-  const revenueCagr = parseFloat(data.RevenueGrowthTTM) || 0;
-  const netMargin = parseFloat(data.ProfitMargin) || 0;
+  const roe = (parseFloat(data.ReturnOnEquityTTM) || 0) / 100;
+  const revenueCagr = (parseFloat(data.RevenueGrowthTTM) || 0) / 100;
+  const netMargin = (parseFloat(data.ProfitMargin) || 0) / 100;
   const debtEquity = parseFloat(data.DebtToEquity) || 0;
   const marketCap = parseFloat(data.MarketCapitalization) || 0;
   if (!peRatio && !roe && !revenueCagr && !netMargin) return null;
