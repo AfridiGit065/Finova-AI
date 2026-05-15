@@ -7,6 +7,7 @@ import { computeScorecard, type ScorecardData } from '@/lib/scorecard-utils';
 import type { NormalizedFundamentals } from '@/lib/providers/types';
 import { SP500_TOP100 } from '@/lib/symbols/sp500-top100';
 import { useResponsive } from '@/hooks/use-responsive';
+import { CubeLogo } from '@/components/shared/cube-logo';
 
 const COPILOT_SYMBOLS = SP500_TOP100.slice(0, 10).map(s => s.sym);
 interface SearchResult { sym: string; name: string; }
@@ -240,7 +241,7 @@ export default function AICopilot() {
       <div style={{ padding: isMobile ? "0 14px" : "0 20px", height: isMobile ? 48 : 56, borderBottom: `1px solid ${U.border}`, display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
         <div style={{ position: "relative", width: isMobile ? 28 : 32, height: isMobile ? 28 : 32, flexShrink: 0 }}>
           <div style={{ position: "absolute", inset: -4, background: `radial-gradient(ellipse, ${U.cyanSoft}, transparent 70%)`, borderRadius: "50%" }} />
-          <img src="/Chula.png" alt="AI" style={{ width: "100%", height: "100%", borderRadius: "50%", objectFit: "cover", position: "relative", zIndex: 1 }} />
+          <CubeLogo size={isMobile ? 28 : 32} />
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontSize: isMobile ? 12 : 14, fontWeight: 600, color: U.text, lineHeight: 1, fontFamily: "'Inter',sans-serif", letterSpacing: "-0.02em" }}>AI Copilot</div>
@@ -264,7 +265,7 @@ export default function AICopilot() {
             <div style={{ position: "relative", width: isMobile ? 56 : 72, height: isMobile ? 56 : 72 }}>
               <div style={{ position: "absolute", inset: -12, background: `radial-gradient(ellipse, ${U.cyanSoft}, transparent 70%)`, borderRadius: "50%" }} />
               <div style={{ width: "100%", height: "100%", borderRadius: "50%", background: U.cardBg, border: U.cardBorder, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", zIndex: 1, boxShadow: U.cardShadow }}>
-                <img src="/Chula.png" alt="AI" style={{ width: "60%", height: "60%", borderRadius: "50%", objectFit: "cover" }} />
+                <CubeLogo size={isMobile ? 34 : 44} />
               </div>
             </div>
             <div style={{ textAlign: "center" }}>
@@ -275,20 +276,20 @@ export default function AICopilot() {
         )}
         {msgs.map((m, i) => (
           <div key={i} style={{ display: "flex", flexDirection: m.role === "user" ? "row-reverse" : "row", alignItems: "flex-start", gap: isMobile ? 8 : 10, animation: "fi .22s ease" }}>
-            {m.role === "assistant" && <img src="/Chula.png" alt="AI" style={{ width: isMobile ? 24 : 28, height: isMobile ? 24 : 28, borderRadius: "50%", flexShrink: 0, marginTop: 2, objectFit: "cover" }} />}
+            {m.role === "assistant" && <CubeLogo size={isMobile ? 24 : 28} />}
             {m.role === "user" && <div style={{ width: isMobile ? 24 : 28, height: isMobile ? 24 : 28, background: U.cardBg, border: U.cardBorder, borderRadius: "50%", flexShrink: 0, marginTop: 2, display: "flex", alignItems: "center", justifyContent: "center", fontSize: isMobile ? 9 : 11, fontWeight: 600, color: U.textDim }}>U</div>}
             <div style={{ maxWidth: isMobile ? "82%" : "72%", padding: isMobile ? "10px 14px" : "12px 16px", fontSize: isMobile ? 12.5 : 13, lineHeight: 1.7, color: U.text, borderRadius: 12, background: m.role === "user" ? U.glass : U.cardBg, border: U.cardBorder, boxShadow: U.cardShadow }} dangerouslySetInnerHTML={{ __html: md(m.content) }} />
           </div>
         ))}
         {loading && streamBuf && (
           <div style={{ display: "flex", alignItems: "flex-start", gap: isMobile ? 8 : 10, animation: "fi .2s ease" }}>
-            <img src="/Chula.png" alt="AI" style={{ width: isMobile ? 24 : 28, height: isMobile ? 24 : 28, borderRadius: "50%", flexShrink: 0, marginTop: 2, objectFit: "cover" }} />
+            <CubeLogo size={isMobile ? 24 : 28} />
             <div style={{ maxWidth: isMobile ? "82%" : "72%", padding: isMobile ? "10px 14px" : "12px 16px", fontSize: isMobile ? 12.5 : 13, lineHeight: 1.7, color: U.text, borderRadius: 12, background: U.cardBg, border: U.cardBorder, boxShadow: U.cardShadow }} dangerouslySetInnerHTML={{ __html: md(streamBuf) }} />
           </div>
         )}
         {loading && !streamBuf && (
           <div style={{ display: "flex", alignItems: "flex-start", gap: isMobile ? 8 : 10, animation: "fi .2s ease" }}>
-            <img src="/Chula.png" alt="AI" style={{ width: isMobile ? 24 : 28, height: isMobile ? 24 : 28, borderRadius: "50%", flexShrink: 0, marginTop: 2, objectFit: "cover" }} />
+            <CubeLogo size={isMobile ? 24 : 28} />
             <div style={{ padding: "14px 18px", background: U.cardBg, border: U.cardBorder, borderRadius: 12, display: "flex", alignItems: "center", gap: 6, boxShadow: U.cardShadow }}>
               {[0, 1, 2].map(j => <span key={j} style={{ width: 6, height: 6, borderRadius: "50%", background: `linear-gradient(135deg,${U.cyan},${U.violet})`, display: "inline-block", animation: `dp 1.4s ease ${j * 0.18}s infinite` }} />)}
               <span style={{ fontSize: 11, color: U.textMute, marginLeft: 4, fontWeight: 500 }}>Analyzing{'\u2026'}</span>
