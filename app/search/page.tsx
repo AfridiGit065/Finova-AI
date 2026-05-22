@@ -17,22 +17,33 @@ export default function SearchPage() {
   const { watchlist } = useWatchlist();
 
   useEffect(() => {
-    if (!query.trim()) { setResults([]); setError(null); return; }
-    setLoading(true);
-    setError(null);
+    if (!query.trim()) {
+      Promise.resolve().then(() => {
+        setResults([]);
+        setError(null);
+      });
+      return;
+    }
+    let active = true;
     const t = setTimeout(async () => {
+      Promise.resolve().then(() => {
+        if (active) {
+          setLoading(true);
+          setError(null);
+        }
+      });
       try {
         const res = await fetch(`/api/symbols?q=${encodeURIComponent(query)}`);
         if (!res.ok) throw new Error('Search request failed');
         const data = await res.json();
-        setResults(data);
+        if (active) setResults(data);
       } catch (e) {
-        setError(e instanceof Error ? e.message : 'Search unavailable');
+        if (active) setError(e instanceof Error ? e.message : 'Search unavailable');
       } finally {
-        setLoading(false);
+        if (active) setLoading(false);
       }
     }, 200);
-    return () => clearTimeout(t);
+    return () => { active = false; clearTimeout(t); };
   }, [query]);
 
   const filtered = results;

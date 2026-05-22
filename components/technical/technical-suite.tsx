@@ -97,7 +97,10 @@ export default function TechnicalSuite() {
   }, []);
 
   useEffect(() => {
-    if (!searchQuery.trim()) { setSearchResults([]); return; }
+    if (!searchQuery.trim()) {
+      Promise.resolve().then(() => setSearchResults([]));
+      return;
+    }
     clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(async () => {
       try {
@@ -123,9 +126,11 @@ export default function TechnicalSuite() {
 
   useEffect(() => {
     let mounted = true;
-    setLoading(true);
-    setError(null);
     const load = async () => {
+      await Promise.resolve();
+      if (!mounted) return;
+      setLoading(true);
+      setError(null);
       try {
         const res = await fetch(`/api/market/candles?symbol=${sel}`);
         if (!res.ok) {

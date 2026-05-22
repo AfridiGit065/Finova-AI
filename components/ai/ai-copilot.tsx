@@ -53,10 +53,13 @@ export default function AICopilot() {
   }, []);
 
   useEffect(() => {
-    if (!searchQuery.trim()) { setSearchResults([]); return; }
-    setSearching(true);
     clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(async () => {
+      if (!searchQuery.trim()) {
+        setSearchResults([]);
+        return;
+      }
+      setSearching(true);
       try {
         const res = await fetch(`/api/symbols?q=${encodeURIComponent(searchQuery)}`);
         if (!res.ok) return;

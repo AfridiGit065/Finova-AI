@@ -3,10 +3,11 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
-  LayoutDashboard, TrendingUp, Bot, BarChart2, Globe
+  LayoutDashboard, TrendingUp, Bot, BarChart2, Globe, Bell
 } from "lucide-react";
 import { U } from '@/lib/constants';
 import { useMarketStatus } from '@/hooks/use-market-status';
+import { useNotifications } from '@/components/shared/notification-provider';
 
 
 export const NAV = [
@@ -15,6 +16,7 @@ export const NAV = [
   { id: "copilot", label: "AI Copilot", icon: Bot, href: "/copilot" },
   { id: "compare", label: "Compare Assets", icon: BarChart2, href: "/compare" },
   { id: "news", label: "News Sentiment", icon: Globe, href: "/news" },
+  { id: "notifications", label: "Notifications", icon: Bell, href: "/notifications" },
 ];
 
 interface SidebarProps {
@@ -26,6 +28,7 @@ interface SidebarProps {
 export function Sidebar({ open, mobile, onClose }: SidebarProps) {
   const pathname = usePathname();
   const { online, marketOpen, timestamp } = useMarketStatus();
+  const { unreadCount } = useNotifications();
   const openW = open ? 'var(--sidebar-w)' : '0px';
 
   return (
@@ -93,6 +96,26 @@ export function Sidebar({ open, mobile, onClose }: SidebarProps) {
                     width: 5, height: 5, borderRadius: "50%", background: U.emerald,
                     flexShrink: 0, boxShadow: `0 0 6px ${U.emerald}`, animation: "pulse-dot 2.5s ease infinite"
                   }} />}
+                  {id === "notifications" && unreadCount > 0 && (
+                    <span style={{
+                      background: U.rose,
+                      color: '#ffffff',
+                      fontSize: 10,
+                      fontWeight: 700,
+                      borderRadius: 8,
+                      padding: '1px 6px',
+                      minWidth: 16,
+                      height: 16,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      boxShadow: `0 0 8px ${U.rose}`,
+                      animation: "pulse-dot 2.5s ease infinite",
+                      flexShrink: 0
+                    }}>
+                      {unreadCount}
+                    </span>
+                  )}
                 </div>
               </Link>
             );

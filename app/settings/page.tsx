@@ -40,15 +40,20 @@ export default function SettingsPage() {
   };
 
   useEffect(() => {
-    if (!addQuery.trim()) { setAddResults([]); return; }
+    if (!addQuery.trim()) {
+      Promise.resolve().then(() => setAddResults([]));
+      return;
+    }
+    let active = true;
     const t = setTimeout(async () => {
       try {
         const res = await fetch(`/api/symbols?q=${encodeURIComponent(addQuery)}`);
         if (!res.ok) return;
-        setAddResults(await res.json());
+        const data = await res.json();
+        if (active) setAddResults(data);
       } catch {}
     }, 200);
-    return () => clearTimeout(t);
+    return () => { active = false; clearTimeout(t); };
   }, [addQuery]);
 
   const connections = [
