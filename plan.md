@@ -1,4 +1,4 @@
-# Implementation Plan: NEXUS Dashboard
+# Implementation Plan: Finova AI Dashboard
 
 ## 1. Core Structure
 - [ ] Migrate `globals.css` with design tokens and keyframes.

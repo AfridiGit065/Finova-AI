@@ -1,4 +1,4 @@
-# NEXUS Design System
+# Finova AI Design System
 
 ## Visual Identity: Dark Glassmorphism
 

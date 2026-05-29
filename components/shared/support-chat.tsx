@@ -20,7 +20,7 @@ export function SupportChat() {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [msgs, setMsgs] = useState<Message[]>([
-    { role: 'bot', text: 'Hello! I am the NEXUS Assistant. I can help you navigate the dashboard and use our analysis tools. What would you like to explore?' }
+    { role: 'bot', text: 'Hello! I am the Finova AI Assistant. I can help you navigate the dashboard and use our analysis tools. What would you like to explore?' }
   ]);
   const [inp, setInp] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -139,7 +139,7 @@ export function SupportChat() {
             <Bot size={14} color="white" />
           </div>
           <div>
-            <div style={{ fontSize: 13, fontWeight: 700, color: U.text }}>NEXUS Assistant</div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: U.text }}>Finova AI Assistant</div>
             <div style={{ fontSize: 10, color: U.emerald, display: 'flex', alignItems: 'center', gap: 4 }}>
               <span style={{ width: 6, height: 6, borderRadius: '50%', background: U.emerald, display: 'inline-block', boxShadow: `0 0 6px ${U.emeraldSoft}` }} />
               Online

@@ -1,4 +1,4 @@
-# NEXUS Dashboard
+# Finova AI Dashboard
 
 A fintech analytics dashboard with real-time market data, AI-powered stock analysis, and technical indicators.
 

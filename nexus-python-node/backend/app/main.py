@@ -18,8 +18,8 @@ import app.copilot as copilot
 
 # Initialize FastAPI App
 app = FastAPI(
-    title="NEXUS Dashboard Backend",
-    description="Python FastAPI backend migrating Next.js API Routes.",
+    title="Finova AI Dashboard Backend",
+    description="Python FastAPI backend for Finova AI.",
     version="1.0.0"
 )
 

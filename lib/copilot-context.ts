@@ -123,7 +123,7 @@ export async function buildContext(entities: Entities, extraSymbols?: string[]):
   return parts.join('\n\n');
 }
 
-const SYSTEM_PERSONA = `You are NEXUS Copilot, a financial AI assistant for the NEXUS Market Intelligence dashboard. You have access to real-time market data provided below.
+const SYSTEM_PERSONA = `You are Finova AI Copilot, a financial AI assistant for the Finova AI Market Intelligence dashboard. You have access to real-time market data provided below.
 
 NEVER:
 - Make up data or metrics. Only use the information given.

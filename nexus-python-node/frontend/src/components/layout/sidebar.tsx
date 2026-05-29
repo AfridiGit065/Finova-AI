@@ -61,8 +61,8 @@ export function Sidebar({ open, mobile, onClose }: SidebarProps) {
             fontSize: 17, fontWeight: 800, color: U.text,
             letterSpacing: "-0.03em", lineHeight: 1, display: "flex", alignItems: "center", gap: 8
           }}>
-            <img src="/nexus.png" alt="Nexus" style={{ width: 26, height: 26, borderRadius: 6, flexShrink: 0 }} />
-            NEXUS
+            <img src="/nexus.png" alt="Finova AI" style={{ width: 26, height: 26, borderRadius: 6, flexShrink: 0 }} />
+            Finova AI
           </div>
           <div style={{
             fontSize: 9, fontWeight: 600, color: U.textFaint,

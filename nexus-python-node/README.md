@@ -1,6 +1,6 @@
-# NEXUS Market Intelligence Dashboard (Python + Node.js Split)
+# Finova AI Market Intelligence Dashboard (Python + Node.js Split)
 
-This repository contains the split-architecture version of the NEXUS Market Intelligence Dashboard:
+This repository contains the split-architecture version of the Finova AI Market Intelligence Dashboard:
 * **Frontend (`/frontend`)**: Built on Node.js using React 19, Next.js 16 (App Router), TypeScript 5, and Tailwind CSS 4.
 * **Backend (`/backend`)**: Built on Python 3.10+ using FastAPI and Uvicorn.
 
