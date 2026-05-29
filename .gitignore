@@ -43,3 +43,12 @@ next-env.d.ts
 # data cache
 data/
 .idea/
+
+# python compile files
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+.env.local
+
