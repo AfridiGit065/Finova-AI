@@ -44,30 +44,54 @@ Open [http://localhost:3000](http://localhost:3000).
 | `/settings` | API key status, watchlist, cache |
 | `/notifications` | Price/volume alerts (WIP) |
 
-## Project Structure
+## Repository Architectures
 
+This repository contains two alternative implementations for the Finova AI Dashboard:
+
+### 1. Monolithic Next.js Architecture (Default, Root Folder)
+* **Frontend + API Routes:** Built using Next.js 16.2.4 (App Router), React 19.2.4, TypeScript 5, and Tailwind CSS 4.
+* **Server-side proxies:** API endpoints are located in `app/api/*` and act as backend handlers, performing key rotation, data fetching, double caching, and AI streaming.
+* **Database/Caching:** 3-layer candle cache (L1 RAM cache, L2 local file cache at `data/candles/{SYM}.json`, L3 API).
+
+To run this version:
+```bash
+npm install
+# Create .env.local in root and fill in your API keys (see API Keys section below)
+npm run dev
 ```
+
+### 2. Python + Vite Split Architecture (Located in `/nexus-python-node`)
+* **Frontend:** Built using React 19, Vite, TypeScript 5, and Tailwind CSS 4.
+* **Backend:** Built using FastAPI (Python 3.10+) running on port 8000.
+* **Decoupling:** Decouples Client UI code from data caching, key rotation, and Gemini streaming.
+* See the [`nexus-python-node/README.md`](./nexus-python-node/README.md) file for setup and execution steps.
+
+---
+
+## Project Structure (Monolithic Version)
+
+```text
 app/
-  api/           # Next.js Route Handlers (server-side API proxies)
-  (routes)       # Page components per route
+  api/            # Next.js Route Handlers (server-side API proxies)
+  (routes)        # Page components per route
 components/
-  layout/        # App shell (sidebar, header, ticker tape)
-  shared/        # ErrorMessage, ToastProvider
-  dashboard/     # Dashboard widgets
-  technical/     # Technical analysis suite
-  ai/            # Copilot chat & scorecards
-  compare/       # Stock comparison
+  layout/         # App shell (sidebar, header, ticker tape)
+  shared/         # ErrorMessage, ToastProvider
+  dashboard/      # Dashboard widgets
+  technical/      # Technical analysis suite
+  ai/             # Copilot chat & scorecards
+  compare/        # Stock comparison
 hooks/
   use-live-tickers.ts
   use-watchlist.ts
   use-market-status.ts
   use-responsive.ts
 lib/
-  providers/     # Finnhub, Alpha Vantage, Roic AI clients
-  symbols/       # Stock symbol databases
-  cache.ts       # In-memory L1 cache
+  providers/      # Finnhub, Alpha Vantage, Roic AI clients
+  symbols/        # Stock symbol databases
+  cache.ts        # In-memory L1 cache
   candle-cache.ts # File-based L2 cache
-  constants.ts   # Design tokens (U)
+  constants.ts    # Design tokens (U)
 ```
 
 ## Contributing

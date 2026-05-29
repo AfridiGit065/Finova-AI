@@ -1,7 +1,7 @@
 # Finova AI Market Intelligence Dashboard (Python + Node.js Split)
 
 This repository contains the split-architecture version of the Finova AI Market Intelligence Dashboard:
-* **Frontend (`/frontend`)**: Built on Node.js using React 19, Next.js 16 (App Router), TypeScript 5, and Tailwind CSS 4.
+* **Frontend (`/frontend`)**: Built on Node.js using React 19, Vite, TypeScript 5, and Tailwind CSS 4.
 * **Backend (`/backend`)**: Built on Python 3.10+ using FastAPI and Uvicorn.
 
 This setup decouples the frontend client code from the data orchestration, API caching, rate limit key-rotation, and Gemini AI streaming.
@@ -24,13 +24,11 @@ nexus-python-node/
 │   ├── requirements.txt      # Python dependencies
 │   └── .env.example          # Backend environment template
 │
-└── frontend/                 # Node.js Next.js Frontend
-    ├── app/                  # App routes (layouts, page views)
-    ├── components/           # UI elements (glassmorphic layouts, charts)
-    ├── hooks/                # Custom React hooks (Live Quote Tickers, watchlists)
-    ├── lib/                  # Shared types and helpers
+└── frontend/                 # Node.js React/Vite Frontend
+    ├── src/                  # Application source code (pages, components, hooks)
+    ├── index.html            # Main HTML entry point
     ├── package.json          # Node dependencies
-    └── next.config.ts        # Next.js configurations with proxy rewrites
+    └── vite.config.ts        # Vite configuration with proxy rules
 ```
 
 ---
@@ -59,7 +57,7 @@ Navigate to the `backend` folder and follow these steps:
 3. **Configure Environment Variables**:
    Copy `.env.example` to `.env` and fill in your API keys:
    ```bash
-   cp .env.example .env
+   copy .env.example .env
    ```
    Provide your:
    * `FINNHUB_API_KEY` (and `FINNHUB_API_KEY_2` for rotation)
@@ -85,8 +83,8 @@ Navigate to the `frontend` folder and follow these steps:
    ```
 
 2. **Configure Port & Environment**:
-   Next.js by default runs on port `3000`. The `next.config.ts` includes a proxy rewrite rule that redirects all `/api/*` calls from port `3000` to port `8000` automatically.
-   *(Note: You do NOT need to configure API keys on the frontend `.env` anymore; they are securely loaded by the Python backend).*
+   Vite by default runs on port `3000`. The `vite.config.ts` includes a proxy rewrite rule that redirects all `/api/*` calls from port `3000` to port `8000` automatically.
+   *(Note: You do NOT need to configure API keys on the frontend anymore; they are securely loaded by the Python backend).*
 
 3. **Run the Dev Server**:
    ```bash
