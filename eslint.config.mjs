@@ -24,7 +24,7 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
-    "nexus-python-node/**",
+    "finova-python-node/**",
   ]),
 ]);
 

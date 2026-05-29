@@ -27,7 +27,7 @@ Static list of the top ~100 S&P 500 constituents by market cap. `{sym, name}` pa
 
 ### Step 2 — `hooks/use-watchlist.ts`
 
-- On mount: checks `localStorage['nexus-watchlist']`
+- On mount: checks `localStorage['finova-watchlist']`
 - If empty: writes default `SP500_TOP100` as the initial watchlist
 - Exports `{ watchlist, addSymbol, removeSymbol, isWatched }`
 - `watchlist` is the source of truth for ticker tape + dashboard

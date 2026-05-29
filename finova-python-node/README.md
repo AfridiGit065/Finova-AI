@@ -11,7 +11,7 @@ This setup decouples the frontend client code from the data orchestration, API c
 ## Folder Structure
 
 ```text
-nexus-python-node/
+finova-python-node/
 ├── backend/                  # Python FastAPI Backend
 │   ├── app/
 │   │   ├── providers/        # Finnhub, Alpha Vantage, Roic AI providers

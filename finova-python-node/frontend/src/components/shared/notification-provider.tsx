@@ -50,10 +50,10 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     Promise.resolve().then(() => {
       if (!active) return;
       try {
-        const storedAlerts = localStorage.getItem('nexus-alerts');
+        const storedAlerts = localStorage.getItem('finova-alerts');
         if (storedAlerts) setAlerts(JSON.parse(storedAlerts));
 
-        const storedNotifications = localStorage.getItem('nexus-notifications');
+        const storedNotifications = localStorage.getItem('finova-notifications');
         if (storedNotifications) setNotifications(JSON.parse(storedNotifications));
       } catch {}
     });
@@ -64,14 +64,14 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   const saveAlerts = (newAlerts: PriceAlert[]) => {
     setAlerts(newAlerts);
     try {
-      localStorage.setItem('nexus-alerts', JSON.stringify(newAlerts));
+      localStorage.setItem('finova-alerts', JSON.stringify(newAlerts));
     } catch {}
   };
 
   const saveNotifications = (newNotifications: MarketNotification[]) => {
     setNotifications(newNotifications);
     try {
-      localStorage.setItem('nexus-notifications', JSON.stringify(newNotifications));
+      localStorage.setItem('finova-notifications', JSON.stringify(newNotifications));
     } catch {}
   };
 
@@ -144,7 +144,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     setAlerts(prev => {
       const next = [newAlert, ...prev];
       try {
-        localStorage.setItem('nexus-alerts', JSON.stringify(next));
+        localStorage.setItem('finova-alerts', JSON.stringify(next));
       } catch {}
       return next;
     });
@@ -155,7 +155,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     setAlerts(prev => {
       const next = prev.filter(a => a.id !== id);
       try {
-        localStorage.setItem('nexus-alerts', JSON.stringify(next));
+        localStorage.setItem('finova-alerts', JSON.stringify(next));
       } catch {}
       return next;
     });
@@ -165,7 +165,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     setNotifications(prev => {
       const next = prev.map(n => n.id === id ? { ...n, read: true } : n);
       try {
-        localStorage.setItem('nexus-notifications', JSON.stringify(next));
+        localStorage.setItem('finova-notifications', JSON.stringify(next));
       } catch {}
       return next;
     });
@@ -175,7 +175,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     setNotifications(prev => {
       const next = prev.map(n => ({ ...n, read: true }));
       try {
-        localStorage.setItem('nexus-notifications', JSON.stringify(next));
+        localStorage.setItem('finova-notifications', JSON.stringify(next));
       } catch {}
       return next;
     });
@@ -185,7 +185,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     setNotifications(prev => {
       const next = prev.filter(n => n.id !== id);
       try {
-        localStorage.setItem('nexus-notifications', JSON.stringify(next));
+        localStorage.setItem('finova-notifications', JSON.stringify(next));
       } catch {}
       return next;
     });
@@ -194,7 +194,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   const clearAllNotifications = useCallback(() => {
     setNotifications([]);
     try {
-      localStorage.setItem('nexus-notifications', JSON.stringify([]));
+      localStorage.setItem('finova-notifications', JSON.stringify([]));
     } catch {}
   }, []);
 

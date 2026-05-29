@@ -60,11 +60,11 @@ npm install
 npm run dev
 ```
 
-### 2. Python + Vite Split Architecture (Located in `/nexus-python-node`)
+### 2. Python + Vite Split Architecture (Located in `/finova-python-node`)
 * **Frontend:** Built using React 19, Vite, TypeScript 5, and Tailwind CSS 4.
 * **Backend:** Built using FastAPI (Python 3.10+) running on port 8000.
 * **Decoupling:** Decouples Client UI code from data caching, key rotation, and Gemini streaming.
-* See the [`nexus-python-node/README.md`](./nexus-python-node/README.md) file for setup and execution steps.
+* See the [`finova-python-node/README.md`](./finova-python-node/README.md) file for setup and execution steps.
 
 ---
 

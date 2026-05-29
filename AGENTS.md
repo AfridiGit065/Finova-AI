@@ -125,7 +125,7 @@ marketCap:        m.marketCapitalization         // raw number
 ## UI patterns
 - **Design tokens**: `lib/constants.ts` exports `U` object; CSS custom properties in `globals.css`. Components use both. `design.md` documents the visual system.
 - **Live tickers**: `useLiveTickers()` hook polls `/api/market/quote` with round-robin 5 symbols/10s — used in `TickerTape` and `Dashboard`.
-- **Watchlist**: `useWatchlist()` reads/writes `nexus-watchlist` in localStorage, defaults to SP500_TOP100.
+- **Watchlist**: `useWatchlist()` reads/writes `finova-watchlist` in localStorage, defaults to SP500_TOP100.
 - **`next/dynamic`**: `SectorHeatmap` uses `dynamic(() => import(...), { ssr: false })`.
 - **Inline styles**: Components use inline `style` props with `U.*` tokens, NOT Tailwind utility classes.
 - **No barrel files**: Import directly from the source file.

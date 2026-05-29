@@ -17,7 +17,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     let active = true;
     Promise.resolve().then(() => {
       if (!active) return;
-      const saved = localStorage.getItem('nexus-theme') as Theme;
+      const saved = localStorage.getItem('finova-theme') as Theme;
       if (saved === 'light') {
         setTheme('light');
         document.documentElement.classList.add('light-mode');
@@ -29,7 +29,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const toggleTheme = () => {
     setTheme(prev => {
       const next = prev === 'dark' ? 'light' : 'dark';
-      localStorage.setItem('nexus-theme', next);
+      localStorage.setItem('finova-theme', next);
       if (next === 'light') {
         document.documentElement.classList.add('light-mode');
       } else {

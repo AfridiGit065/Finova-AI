@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { SP500_TOP100 } from '@/lib/symbols/sp500-top100';
 import type { SymbolEntry } from '@/lib/symbols/sp500-top100';
 
-const STORAGE_KEY = 'nexus-watchlist';
+const STORAGE_KEY = 'finova-watchlist';
 
 export function useWatchlist() {
   const [watchlist, setWatchlist] = useState<SymbolEntry[]>([]);

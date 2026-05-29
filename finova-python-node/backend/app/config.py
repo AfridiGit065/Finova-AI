@@ -10,7 +10,7 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
 )
-logger = logging.getLogger("nexus-backend")
+logger = logging.getLogger("finova-backend")
 
 # API Keys
 FINNHUB_API_KEYS = [
