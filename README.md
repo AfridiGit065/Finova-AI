@@ -74,7 +74,7 @@ lib/
 
 ### Issue Tracker
 
-All work is tracked on the [GitHub Project Board](https://github.com/users/Injabin/projects/1). The board uses these columns:
+All work is tracked on the [GitHub Project Board](https://github.com/users/AfridiGit065/projects/1). The board uses these columns:
 
 | Column | Description |
 |--------|-------------|

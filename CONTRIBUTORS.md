@@ -6,7 +6,7 @@ This project has received contributions from amazing developers:
 
 | Name | Contributions | Links |
 |------|---|---|
-| **SDAbon21** | 🔧 Market Cap Formatting (#13), Percentage Normalization (#15), Candlestick Sorting (#22) | [Profile](https://github.com/SDAbon21) \| [Fork](https://github.com/SDAbon21/fintech-ai-swe-proj-next-js) |
+| **AfridiGit065** | 🔧 Real-time Dashboard, API Proxy Integration, AI Copilot, Rebranding | [Profile](https://github.com/AfridiGit065) |
 
 ---
 
