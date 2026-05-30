@@ -49,11 +49,13 @@ Open [http://localhost:3000](http://localhost:3000).
 This repository contains two alternative implementations for the Finova AI Dashboard:
 
 ### 1. Monolithic Next.js Architecture (Default, Root Folder)
-* **Frontend + API Routes:** Built using Next.js 16.2.4 (App Router), React 19.2.4, TypeScript 5, and Tailwind CSS 4.
-* **Server-side proxies:** API endpoints are located in `app/api/*` and act as backend handlers, performing key rotation, data fetching, double caching, and AI streaming.
-* **Database/Caching:** 3-layer candle cache (L1 RAM cache, L2 local file cache at `data/candles/{SYM}.json`, L3 API).
+
+- **Frontend + API Routes:** Built using Next.js 16.2.4 (App Router), React 19.2.4, TypeScript 5, and Tailwind CSS 4.
+- **Server-side proxies:** API endpoints are located in `app/api/*` and act as backend handlers, performing key rotation, data fetching, double caching, and AI streaming.
+- **Database/Caching:** 3-layer candle cache (L1 RAM cache, L2 local file cache at `data/candles/{SYM}.json`, L3 API).
 
 To run this version:
+
 ```bash
 npm install
 # Create .env.local in root and fill in your API keys (see API Keys section below)
@@ -61,10 +63,11 @@ npm run dev
 ```
 
 ### 2. Python + Vite Split Architecture (Located in `/finova-python-node`)
-* **Frontend:** Built using React 19, Vite, TypeScript 5, and Tailwind CSS 4.
-* **Backend:** Built using FastAPI (Python 3.10+) running on port 8000.
-* **Decoupling:** Decouples Client UI code from data caching, key rotation, and Gemini streaming.
-* See the [`finova-python-node/README.md`](./finova-python-node/README.md) file for setup and execution steps.
+
+- **Frontend:** Built using React 19, Vite, TypeScript 5, and Tailwind CSS 4.
+- **Backend:** Built using FastAPI (Python 3.10+) running on port 8000.
+- **Decoupling:** Decouples Client UI code from data caching, key rotation, and Gemini streaming.
+- See the [`finova-python-node/README.md`](./finova-python-node/README.md) file for setup and execution steps.
 
 ---
 
@@ -126,7 +129,7 @@ All work is tracked on the [GitHub Project Board](https://github.com/users/Afrid
 
 1. Pick an issue from the **Ready** column and assign yourself
 2. Move it to **In progress**
-3. Create a feature branch from `master`:
+3. Create a feature branch from `main`:
    ```bash
    git checkout -b feat/description
    ```
@@ -140,7 +143,7 @@ All work is tracked on the [GitHub Project Board](https://github.com/users/Afrid
    npm run lint
    npm test
    ```
-6. Open a PR against `master` and request review
+6. Open a PR against `main` and request review
 7. Move the issue to **In review**
 8. Once approved and merged, move to **Done**
 
@@ -149,14 +152,14 @@ All work is tracked on the [GitHub Project Board](https://github.com/users/Afrid
 - **Design tokens:** Use `U.*` from `lib/constants.ts` for all colors, spacing, and glass effects
 - **Styling:** Inline `style` props with `U.*` tokens; Tailwind only in `globals.css`
 - **Data fetching:** All external API calls go through `/api/*` route handlers — no client-side direct calls
-- **Error states:** Use `ErrorMessage` component or display `"\u2014"` for missing data
+- **Error states:** Use `ErrorMessage` component or display `"—"` for missing data
 - **Loading states:** Use shimmer skeletons or loading fallbacks for dynamic imports
 
 ## API Keys
 
 This project requires API keys for data providers. Set these in `.env.local`:
 
-```
+```env
 FINNHUB_API_KEY=
 FINNHUB_API_KEY_2=
 ALPHA_VANTAGE_API_KEY=
