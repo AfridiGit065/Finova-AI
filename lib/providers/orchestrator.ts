@@ -5,8 +5,9 @@ import {
 import {
   fetchQuote as fhQuote,
   fetchFundamentals as fhFundamentals, fetchNews as fhNews,
-  fetchKpis as fhKpis, fetchSectors as fhSectors,
+  fetchKpis as fhKpis,
 } from './finnhub';
+
 import {
   fetchQuote as avQuote, fetchCandles as avCandles,
   fetchFundamentals as avFundamentals,
@@ -70,8 +71,6 @@ export async function fetchKpis(): Promise<NormalizedKpis> {
 
 export async function fetchSectors(): Promise<NormalizedSector[]> {
   const etfSectors = await fetchSectorPerformance();
-  if (etfSectors.length > 0) {
-    return etfSectors.map(s => ({ name: s.name, value: 0, chg: s.chg }));
-  }
-  try { return await fhSectors(); } catch { return []; }
+  return etfSectors.map(s => ({ name: s.name, value: 0, chg: s.chg }));
 }
+

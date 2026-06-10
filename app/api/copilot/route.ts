@@ -29,15 +29,24 @@ export async function POST(request: NextRequest) {
   }));
 
   const ai = new GoogleGenAI({ apiKey });
-  const response = await ai.models.generateContentStream({
-    model: 'gemini-3-flash-preview',
-    contents,
-    config: {
-      systemInstruction: context,
-      temperature: 0.7,
-      maxOutputTokens: 1024,
-    },
-  });
+  let response;
+  try {
+    response = await ai.models.generateContentStream({
+      model: 'gemini-2.5-flash',
+      contents,
+      config: {
+        systemInstruction: context,
+        temperature: 0.7,
+        maxOutputTokens: 1024,
+      },
+    });
+  } catch (err: any) {
+    console.error('[Copilot] Gemini API error:', err);
+    return new Response(
+      JSON.stringify({ error: err?.message ?? 'Gemini API request failed' }),
+      { status: 502, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
 
   const stream = new ReadableStream({
     async start(controller) {
