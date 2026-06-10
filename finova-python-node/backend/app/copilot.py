@@ -2,7 +2,8 @@ import re
 import json
 import asyncio
 import httpx
-import google.generativeai as genai
+from google import genai
+from google.genai import types as genai_types
 from typing import List, Dict, Any, Tuple, Optional
 
 from app.config import GEMINI_API_KEY, logger
@@ -10,8 +11,7 @@ from app.symbols import get_all_symbols
 import app.providers.orchestrator as orchestrator
 
 # Initialize Gemini SDK
-if GEMINI_API_KEY:
-    genai.configure(api_key=GEMINI_API_KEY)
+_gemini_client = genai.Client(api_key=GEMINI_API_KEY) if GEMINI_API_KEY else None
 
 SYSTEM_PERSONA = """You are Finova AI Copilot, a financial AI assistant for the Finova AI Market Intelligence dashboard. You have access to real-time market data provided below.
 
@@ -197,66 +197,67 @@ async def build_context(client: httpx.AsyncClient, tickers: List[str], intent: s
     return "\n\n".join(parts)
 
 async def generate_gemini_stream(messages: List[Dict[str, str]], system_instruction: str):
-    if not GEMINI_API_KEY:
+    if not _gemini_client:
         yield f"data: {json.dumps({'error': 'GEMINI_API_KEY not configured'})}\n\n"
         yield "data: [DONE]\n\n"
         return
 
-    # Map message roles (assistant -> model, etc.)
+    # Map message roles to google-genai Content objects
     contents = []
     for m in messages:
-        # In route.ts, messages can have role 'bot' or 'assistant' or 'user'
-        # Also supports 'text' or 'content' depending on the route (support vs copilot)
         role = "model" if m.get("role") in ("assistant", "bot", "model") else "user"
         text = m.get("content") or m.get("text") or ""
-        contents.append({"role": role, "parts": [text]})
-        
-    try:
-        # We try 'gemini-3-flash-preview' first, fallback to 'gemini-1.5-flash'
-        model_name = 'gemini-3-flash-preview'
+        contents.append(
+            genai_types.Content(
+                role=role,
+                parts=[genai_types.Part(text=text)]
+            )
+        )
+
+    config = genai_types.GenerateContentConfig(
+        system_instruction=system_instruction,
+        temperature=0.7,
+        max_output_tokens=1024,
+    )
+
+    # Try gemini-2.0-flash first, fallback to gemini-1.5-flash
+    for model_name in ("gemini-2.0-flash", "gemini-1.5-flash"):
         try:
-            model = genai.GenerativeModel(
-                model_name=model_name,
-                system_instruction=system_instruction
-            )
-            # Dry run / config check or direct generation
-        except Exception:
-            model_name = 'gemini-1.5-flash'
-            model = genai.GenerativeModel(
-                model_name=model_name,
-                system_instruction=system_instruction
-            )
-            
-        config = genai.types.GenerationConfig(
-            temperature=0.7,
-            max_output_tokens=1024
-        )
-        
-        response = await asyncio.to_thread(
-            model.generate_content,
-            contents,
-            generation_config=config,
-            stream=True
-        )
-        
-        for chunk in response:
-            text = chunk.text
-            if not text:
-                continue
-            payload = {
-                "candidates": [{
-                    "content": {
-                        "parts": [{"text": text}],
-                        "role": "model"
-                    }
-                }]
-            }
-            yield f"data: {json.dumps(payload)}\n\n"
-            
-        yield "data: [DONE]\n\n"
-        
-    except Exception as e:
-        logger.error(f"Gemini streaming failed: {e}")
-        payload = {"error": f"Gemini error: {str(e)}"}
-        yield f"data: {json.dumps(payload)}\n\n"
-        yield "data: [DONE]\n\n"
+            def _do_stream():
+                return _gemini_client.models.generate_content_stream(
+                    model=model_name,
+                    contents=contents,
+                    config=config,
+                )
+
+            stream = await asyncio.to_thread(_do_stream)
+
+            for chunk in stream:
+                try:
+                    text = chunk.text
+                except Exception:
+                    continue
+                if not text:
+                    continue
+                payload = {
+                    "candidates": [{
+                        "content": {
+                            "parts": [{"text": text}],
+                            "role": "model"
+                        }
+                    }]
+                }
+                yield f"data: {json.dumps(payload)}\n\n"
+
+            yield "data: [DONE]\n\n"
+            return  # success — stop trying fallbacks
+
+        except Exception as e:
+            logger.warning(f"Gemini model {model_name} failed: {e}")
+            continue
+
+    # All models failed
+    logger.error("All Gemini models failed")
+    payload = {"error": "Gemini is temporarily unavailable. Please try again."}
+    yield f"data: {json.dumps(payload)}\n\n"
+    yield "data: [DONE]\n\n"
